@@ -155,7 +155,7 @@ export default function LoginForm() {
               <Label htmlFor="password">Contraseña</Label>
               <a
                 href="/forgot-password"
-                className="text-xs text-zinc-400 transition-colors hover:text-zinc-700"
+                className="text-xs text-zinc-400 transition-colors hover:text-blue-600"
               >
                 ¿Olvidaste tu contraseña?
               </a>
@@ -201,17 +201,34 @@ export default function LoginForm() {
             <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
           </Button>
 
-          <Button
+          <div className="flex items-center gap-3 pt-1">
+            <span className="h-px flex-1 bg-zinc-200" />
+            <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-400">o</span>
+            <span className="h-px flex-1 bg-zinc-200" />
+          </div>
+
+          <button
             type="button"
-            variant="secondary"
-            size="md"
             onClick={fillDemo}
-            className="w-full text-xs font-normal"
+            className="w-full rounded-lg border border-dashed border-zinc-200 py-2.5 text-xs text-zinc-500 transition-colors hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700"
           >
-            Usar credenciales de prueba — <span className="text-zinc-600">{DEMO.email}</span>
-          </Button>
+            Usar credenciales de prueba —{' '}
+            <span className="font-medium text-zinc-700">{DEMO.email}</span>
+          </button>
         </form>
       )}
+
+      {/* módulos, visibles solo donde la columna derecha no se muestra */}
+      <div className="mt-8 flex flex-wrap gap-1.5 lg:hidden">
+        {['ERP', 'WMS', 'TMS', 'RRHH'].map((m) => (
+          <span
+            key={m}
+            className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-1 text-[10px] font-semibold tracking-wide text-zinc-500"
+          >
+            {m}
+          </span>
+        ))}
+      </div>
     </>
   );
 }
