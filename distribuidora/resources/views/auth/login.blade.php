@@ -6,7 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Iniciar Sesión - {{ config('app.name') }}</title>
     
-    @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+    @viteReactRefresh
+    @vite(['resources/js/app.jsx'])
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,6 +22,5 @@
 <body class="bg-white">
     <div id="login-page"></div>
     
-    @viteReactRefresh
 </body>
 </html>

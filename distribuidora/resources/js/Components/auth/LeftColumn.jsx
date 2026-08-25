@@ -1,33 +1,36 @@
+import { Boxes } from 'lucide-react';
 import LoginForm from './LoginForm';
 
 export default function LeftColumn() {
   return (
-    <div className="relative w-full lg:w-[46%] min-h-screen bg-white flex flex-col">
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,_rgb(255,255,255)_0%,_rgb(248,250,252)_100%)]" />
-      
-      <div className="relative z-10 flex flex-col flex-1">
-        <header className="p-8 lg:p-12 flex items-center gap-4">
-          <div className="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-400 flex items-center justify-center shadow-lg shadow-zinc-400/20">
-            <svg className="w-8 h-8 lg:w-9 lg:h-9 text-zinc-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-zinc-900 tracking-wider uppercase">Distribuidora SAC</h1>
-            <p className="text-zinc-500 mt-1 text-sm lg:text-base tracking-wide uppercase">Sistema de Gestión Integral</p>
-          </div>
-        </header>
+    <div className="relative flex w-full flex-col justify-between bg-white p-6 sm:p-10 lg:w-[46%]">
+      {/* resplandor muy sutil detrás del formulario */}
+      <div className="pointer-events-none absolute -left-40 top-1/4 h-96 w-96 rounded-full bg-emerald-500/[0.06] blur-3xl" />
 
-        <main className="flex-1 flex items-center justify-center px-6 lg:px-12 py-8">
-          <LoginForm />
-        </main>
+      <header className="relative flex items-center gap-2.5">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-950 shadow-lg shadow-zinc-900/15">
+          <Boxes size={17} className="text-white" />
+        </div>
+        <div className="leading-tight">
+          <p className="text-[15px] font-semibold tracking-tight text-zinc-900">Distribuidora SAC</p>
+          <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-400">Suite operativa</p>
+        </div>
+      </header>
 
-        <footer className="px-8 lg:px-12 pb-8 text-center">
-          <p className="text-zinc-500 text-sm">
-            © 2024 Distribuidora SAC. Todos los derechos reservados.
-          </p>
-        </footer>
-      </div>
+      <main className="relative mx-auto w-full max-w-sm py-10">
+        <LoginForm />
+      </main>
+
+      <footer className="relative flex items-center justify-between text-[11px] text-zinc-400">
+        <span className="flex items-center gap-1.5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          </span>
+          Servidor operativo
+        </span>
+        <span>v1.0 · Conexión cifrada</span>
+      </footer>
     </div>
   );
 }

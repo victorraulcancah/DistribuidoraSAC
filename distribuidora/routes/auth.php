@@ -8,9 +8,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', fn () => response()->json(['message' => 'Use API /api/auth/register'], 404));
 
-    Route::get('login', fn () => response()->json(['message' => 'Use API /api/auth/login'], 404))
-        ->name('login');
-
     Route::post('login', fn () => response()->json(['message' => 'Use API /api/auth/login'], 404));
 
     Route::get('forgot-password', fn () => response()->json(['message' => 'Use API /api/auth/forgot-password'], 404))
