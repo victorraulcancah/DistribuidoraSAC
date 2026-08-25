@@ -23,3 +23,10 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
+
+if (document.getElementById('login-page')) {
+  import('./Pages/Login').then(({ default: Login }) => {
+    const root = createRoot(document.getElementById('login-page'));
+    root.render(<Login />);
+  });
+}
