@@ -8,7 +8,7 @@ export const Button = forwardRef(
 
     const variants = {
       primary:
-        'bg-zinc-900 text-white shadow-sm shadow-zinc-900/20 hover:bg-zinc-800 focus-visible:ring-zinc-900/30',
+        'bg-blue-600 text-white shadow-sm shadow-blue-600/25 hover:bg-blue-700 focus-visible:ring-blue-500/40',
       secondary:
         'border border-dashed border-zinc-300 text-zinc-500 hover:border-zinc-400 hover:text-zinc-700 focus-visible:ring-zinc-300',
       ghost: 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:ring-zinc-300',

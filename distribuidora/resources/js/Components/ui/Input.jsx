@@ -20,7 +20,7 @@ export const Input = forwardRef(
           Icon ? 'pl-9' : 'pl-3',
           error
             ? 'border-red-300 focus:border-red-400 focus:ring-red-500/15'
-            : 'border-zinc-200 focus:border-zinc-400 focus:ring-zinc-900/10',
+            : 'border-zinc-200 focus:border-blue-400 focus:ring-blue-500/15',
           className
         )}
         aria-invalid={error ? 'true' : 'false'}
