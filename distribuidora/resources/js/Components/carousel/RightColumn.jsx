@@ -1,82 +1,44 @@
-'use client';
-
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import ModuleCarousel from './ModuleCarousel';
 
+const glowByAccent = {
+  emerald: 'bg-emerald-500/15',
+  sky: 'bg-sky-500/15',
+  violet: 'bg-violet-500/15',
+  teal: 'bg-teal-500/15',
+};
+
 export default function RightColumn() {
-  const gridRef = useRef(null);
-  const [activeGlow, setActiveGlow] = useState('emerald');
-
-  const glowColors = {
-    emerald: 'radial-gradient(ellipse at center, rgba(16,185,129,0.15) 0%, transparent 70%)',
-    sky: 'radial-gradient(ellipse at center, rgba(14,165,233,0.15) 0%, transparent 70%)',
-    amber: 'radial-gradient(ellipse at center, rgba(245,158,11,0.15) 0%, transparent 70%)',
-    violet: 'radial-gradient(ellipse at center, rgba(168,85,247,0.15) 0%, transparent 70%)',
-  };
-
-  useEffect(() => {
-    if (gridRef.current) {
-      const ctx = gridRef.current.getContext('2d');
-      const canvas = gridRef.current;
-      
-      const resize = () => {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        drawGrid();
-      };
-      
-      const drawGrid = () => {
-        const ctx = canvas.getContext('2d');
-        const { width, height } = canvas;
-        const spacing = 56;
-        
-        ctx.clearRect(0, 0, width, height);
-        ctx.strokeStyle = 'rgba(113, 113, 122, 0.15)';
-        ctx.lineWidth = 1;
-        
-        for (let x = 0; x <= width; x += spacing) {
-          ctx.beginPath();
-          ctx.moveTo(x, 0);
-          ctx.lineTo(x, height);
-          ctx.stroke();
-        }
-        
-        for (let y = 0; y <= height; y += spacing) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(width, y);
-          ctx.stroke();
-        }
-      };
-      
-      resize();
-      window.addEventListener('resize', resize);
-      
-      return () => window.removeEventListener('resize', resize);
-    }
-  }, []);
+  const [accent, setAccent] = useState('emerald');
 
   return (
-    <div className="relative hidden lg:flex flex-1 min-h-screen bg-zinc-950 overflow-hidden">
-      <canvas
-        ref={gridRef}
-        className="absolute inset-0"
-        style={{
-          maskImage: 'radial-gradient(ellipse at center, black 0%, transparent 70%)',
-          WebkitMaskImage: 'radial-gradient(ellipse at center, black 0%, transparent 70%)',
-        }}
-        aria-hidden="true"
-      />
-      
+    <div className="relative hidden overflow-hidden border-l border-zinc-900 bg-zinc-950 lg:flex lg:w-[54%] lg:items-center lg:justify-center">
+      {/* rejilla técnica de fondo */}
       <div
-        className="absolute inset-0 transition-all duration-1000 ease-out pointer-events-none"
-        style={{ background: glowColors[activeGlow] }}
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
         aria-hidden="true"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgb(39 39 42) 1px, transparent 1px), linear-gradient(to bottom, rgb(39 39 42) 1px, transparent 1px)',
+          backgroundSize: '56px 56px',
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 45%, black 30%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 45%, black 30%, transparent 75%)',
+        }}
       />
-      
-      <ModuleCarousel 
-        onActiveChange={(module) => setActiveGlow(module.accent)} 
+
+      {/* resplandor que cambia con el módulo activo */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full blur-3xl transition-colors duration-1000 ${glowByAccent[accent]}`}
       />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-zinc-100/[0.03] blur-3xl"
+      />
+
+      <div className="relative z-10 w-full max-w-lg px-10">
+        <ModuleCarousel onActiveChange={(module) => setAccent(module.accent)} />
+      </div>
     </div>
   );
 }

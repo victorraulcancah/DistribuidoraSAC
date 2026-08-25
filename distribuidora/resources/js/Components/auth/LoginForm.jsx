@@ -1,234 +1,217 @@
-'use client';
-
-import { useState, useRef, useEffect } from 'react';
-import { Mail, Lock, Eye, EyeOff, CheckCircle, AlertCircle, Server, Loader2, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight, LogOut } from 'lucide-react';
 import { Button } from '@/Components/ui/Button';
 import { Input } from '@/Components/ui/Input';
 import { Checkbox } from '@/Components/ui/Checkbox';
-import { Card, CardContent, CardFooter } from '@/Components/ui/Card';
 import { Label } from '@/Components/ui/Label';
-import axios from 'axios';
+
+const DEMO = { email: 'admin@distribuidora.com', password: 'password123' };
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [authState, setAuthState] = useState(null);
-  const [demoMode, setDemoMode] = useState(false);
-  
-  const formRef = useRef(null);
-  const toastRef = useRef(null);
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const demoCredentials = {
-    email: 'admin@distribuidora.com',
-    password: 'password123',
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!email) {
-      newErrors.email = 'El correo es obligatorio';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Formato de correo inválido';
+  useEffect(() => {
+    const saved = localStorage.getItem('remember_credentials');
+    if (!saved) return;
+    try {
+      setEmail(JSON.parse(saved).email ?? '');
+    } catch {
+      localStorage.removeItem('remember_credentials');
     }
-    if (!password) {
-      newErrors.password = 'La contraseña es obligatoria';
-    } else if (password.length < 8) {
-      newErrors.password = 'Mínimo 8 caracteres';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  }, []);
 
-  const fillDemo = () => {
-    setEmail(demoCredentials.email);
-    setPassword(demoCredentials.password);
-    setErrors({});
-    setDemoMode(true);
+  const validate = () => {
+    const next = {};
+    if (!email) next.email = 'Ingresa tu correo.';
+    else if (!/^\S+@\S+\.\S+$/.test(email)) next.email = 'Ese correo no parece válido.';
+    if (!password) next.password = 'Ingresa tu contraseña.';
+    else if (password.length < 8) next.password = 'Debe tener al menos 8 caracteres.';
+    return next;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-    
-    setIsLoading(true);
-    setAuthState(null);
-    
+    const next = validate();
+    setErrors(next);
+    setStatus(null);
+    if (Object.keys(next).length) return;
+
+    setLoading(true);
     try {
-      const response = await axios.post('/login', {
-        email,
-        password,
-        remember,
-      });
-      
-      const { token, user } = response.data;
-      
-      if (token) {
-        localStorage.setItem('auth_token', token);
-        if (remember) {
-          localStorage.setItem('remember_credentials', JSON.stringify({ email }));
-        } else {
-          localStorage.removeItem('remember_credentials');
-        }
-        setAuthState({ type: 'success', message: '¡Bienvenido!', user });
-      }
-    } catch (error) {
-      if (error.response?.status === 422) {
-        setErrors(error.response.data.errors || {});
-      } else if (error.response?.status === 401) {
-        setAuthState({ type: 'error', message: 'Credenciales inválidas' });
+      const { data } = await axios.post('/api/auth/login', { email, password, remember });
+      if (data.token) localStorage.setItem('auth_token', data.token);
+      if (remember) localStorage.setItem('remember_credentials', JSON.stringify({ email }));
+      else localStorage.removeItem('remember_credentials');
+      setUser(data.user ?? null);
+      setStatus({ type: 'success', message: 'Bienvenido de vuelta. Redirigiendo al panel...' });
+    } catch (err) {
+      if (err.response?.status === 422 && err.response.data?.errors) {
+        const raw = err.response.data.errors;
+        setErrors(
+          Object.fromEntries(
+            Object.entries(raw).map(([k, v]) => [k, Array.isArray(v) ? v[0] : v])
+          )
+        );
       } else {
-        setAuthState({ type: 'error', message: 'Error de conexión. Intente nuevamente.' });
+        setStatus({
+          type: 'error',
+          message: err.response?.data?.message ?? 'No se pudo conectar con el servidor.',
+        });
       }
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('remember_credentials');
-    setAuthState(null);
-    setEmail('');
+    setUser(null);
+    setStatus(null);
     setPassword('');
-    setRemember(false);
   };
 
-  useEffect(() => {
-    const saved = localStorage.getItem('remember_credentials');
-    if (saved) {
-      try {
-        const { email: savedEmail } = JSON.parse(saved);
-        setEmail(savedEmail);
-        setRemember(true);
-      } catch (e) {
-        localStorage.removeItem('remember_credentials');
-      }
-    }
-  }, []);
-
-  if (authState?.type === 'success') {
-    return (
-      <Card className="w-full max-w-sm animate-in fade-in slide-in-from-top-1">
-        <CardContent className="pt-6">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto bg-emerald-500/20 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-zinc-100">¡Bienvenido de vuelta!</h3>
-              <p className="text-zinc-500 mt-1">{authState.user?.name || authState.user?.email}</p>
-              <p className="text-xs text-zinc-600 mt-0.5">{authState.user?.email}</p>
-            </div>
-            <Button variant="secondary" onClick={handleLogout} className="w-full">
-              Cerrar sesión
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const fillDemo = () => {
+    setEmail(DEMO.email);
+    setPassword(DEMO.password);
+    setErrors({});
+  };
 
   return (
-    <Card className="w-full max-w-sm animate-in fade-in slide-in-from-top-1">
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-5" noValidate>
-        {authState?.type === 'error' && (
-          <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm animate-in fade-in slide-in-from-top-1">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{authState.message}</span>
-          </div>
-        )}
+    <>
+      <div className="mb-7">
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Inicia sesión</h1>
+        <p className="mt-1.5 text-sm text-zinc-500">
+          Un solo acceso para ventas, almacén, caja y despacho.
+        </p>
+      </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="email">Correo electrónico</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (errors.email) setErrors({ ...errors, email: '' });
-            }}
-            error={errors.email}
-            placeholder="usuario@empresa.com"
-            autoComplete="email"
-            icon={Mail}
-            disabled={isLoading}
-          />
+      {status && (
+        <div
+          role="status"
+          className={`mb-5 flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm ${
+            status.type === 'error'
+              ? 'border-red-200 bg-red-50 text-red-700'
+              : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+          }`}
+        >
+          {status.type === 'error' ? (
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+          ) : (
+            <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
+          )}
+          <span>{status.message}</span>
         </div>
+      )}
 
-        <div className="space-y-2">
-          <Label htmlFor="password">Contraseña</Label>
-          <div className="relative">
+      {user ? (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-800 to-zinc-950">
+              <span className="text-sm font-semibold text-white">
+                {(user.name ?? user.email ?? '?').charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-zinc-900">{user.name}</p>
+              <p className="truncate text-xs text-zinc-500">{user.email}</p>
+            </div>
+          </div>
+          <Button variant="secondary" size="lg" onClick={handleLogout} className="w-full">
+            <LogOut size={16} />
+            Cerrar sesión
+          </Button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="email">Correo electrónico</Label>
             <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
+              id="email"
+              type="email"
+              autoComplete="email"
+              icon={Mail}
+              value={email}
+              error={errors.email}
+              disabled={loading}
+              placeholder="nombre@empresa.com"
               onChange={(e) => {
-                setPassword(e.target.value);
-                if (errors.password) setErrors({ ...errors, password: '' });
+                setEmail(e.target.value);
+                if (errors.email) setErrors({ ...errors, email: undefined });
               }}
-              error={errors.password}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              icon={Lock}
-              disabled={isLoading}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
-              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
+            {errors.email && <p className="text-xs text-red-600">{errors.email}</p>}
           </div>
-        </div>
 
-        <div className="flex items-center justify-between">
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Contraseña</Label>
+              <a
+                href="/forgot-password"
+                className="text-xs text-zinc-400 transition-colors hover:text-zinc-700"
+              >
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                icon={Lock}
+                value={password}
+                error={errors.password}
+                disabled={loading}
+                placeholder="••••••••"
+                className="pr-10"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) setErrors({ ...errors, password: undefined });
+                }}
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-700"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.password && <p className="text-xs text-red-600">{errors.password}</p>}
+          </div>
+
           <Checkbox
             id="remember"
             checked={remember}
             onChange={(e) => setRemember(e.target.checked)}
-            label="Mantener sesión"
+            label="Mantener sesión iniciada en este equipo"
           />
-          <a href="/forgot-password" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
-            ¿Olvidó su contraseña?
-          </a>
-        </div>
 
-        <Button type="submit" isLoading={isLoading} className="w-full group" size="lg">
-          Iniciar sesión
-          <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
-        </Button>
+          <Button type="submit" size="lg" isLoading={loading} className="w-full">
+            Ingresar al panel
+            <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+          </Button>
 
-        <Button 
-          type="button" 
-          variant="secondary" 
-          onClick={fillDemo}
-          disabled={isLoading}
-          className="w-full"
-          size="lg"
-        >
-          <Loader2 className="w-5 h-5" />
-          Usar credenciales demo
-        </Button>
-
-        <div className="flex items-center justify-center gap-2 text-xs text-zinc-500 pt-2 border-t border-zinc-800">
-          <div className="flex items-center gap-1.5">
-            <Server className="w-3 h-3 text-emerald-400" />
-            <span className="relative">
-              Servidor operativo
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-ping opacity-75" />
-            </span>
-          </div>
-          <span>v2.4.1</span>
-        </div>
-      </form>
-    </Card>
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={fillDemo}
+            className="w-full text-xs font-normal"
+          >
+            Usar credenciales de prueba — <span className="text-zinc-600">{DEMO.email}</span>
+          </Button>
+        </form>
+      )}
+    </>
   );
 }

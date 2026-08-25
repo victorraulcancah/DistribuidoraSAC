@@ -1,49 +1,28 @@
+import { ShieldCheck } from 'lucide-react';
+
+const racks = [
+  { code: 'A-01', pct: 82 },
+  { code: 'A-02', pct: 46 },
+  { code: 'B-07', pct: 94 },
+];
+
 export default function WMSPreview() {
-  const racks = [
-    { id: 'A-01', zone: 'Recepción', occupancy: 85, items: 1240, color: 'sky' },
-    { id: 'B-03', zone: 'Almacén', occupancy: 92, items: 3450, color: 'emerald' },
-    { id: 'C-07', zone: 'Picking', occupancy: 67, items: 890, color: 'amber' },
-    { id: 'D-12', zone: 'Expedición', occupancy: 45, items: 560, color: 'violet' },
-    { id: 'E-04', zone: 'Frío', occupancy: 78, items: 1100, color: 'rose' },
-    { id: 'F-09', zone: 'Químicos', occupancy: 34, items: 230, color: 'orange' },
-  ];
-
-  const colors = {
-    sky: 'bg-sky-500',
-    emerald: 'bg-emerald-500',
-    amber: 'bg-amber-500',
-    violet: 'bg-violet-500',
-    rose: 'bg-rose-500',
-    orange: 'bg-orange-500',
-  };
-
   return (
-    <div className="space-y-3">
-      <p className="text-xs text-zinc-500 uppercase tracking-wide">Ocupación por Rack</p>
-      <div className="space-y-2">
-        {racks.map((rack) => (
-          <div key={rack.id} className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${colors[rack.color]}`} />
-                <span className="font-mono text-sm text-zinc-100">{rack.id}</span>
-                <span className="text-xs text-zinc-500 px-2 py-0.5 bg-zinc-800 rounded">{rack.zone}</span>
-              </div>
-              <span className="text-sm font-medium text-zinc-300">{rack.items} items</span>
-            </div>
-            <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-700 ${colors[rack.color]}`}
-                style={{ width: `${rack.occupancy}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-1 text-xs">
-              <span className="text-zinc-500">0%</span>
-              <span className="text-zinc-400 font-medium">{rack.occupancy}%</span>
-              <span className="text-zinc-500">100%</span>
-            </div>
+    <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-900/70 p-3">
+      {racks.map((r) => (
+        <div key={r.code} className="flex items-center gap-3">
+          <span className="w-10 shrink-0 font-mono text-[10px] text-zinc-500">{r.code}</span>
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+            <div className="h-full rounded-full bg-sky-400/70" style={{ width: `${r.pct}%` }} />
           </div>
-        ))}
+          <span className="w-8 shrink-0 text-right text-[10px] tabular-nums text-zinc-400">
+            {r.pct}%
+          </span>
+        </div>
+      ))}
+      <div className="flex items-center gap-1.5 border-t border-zinc-800 pt-2 text-[10px] text-zinc-500">
+        <ShieldCheck size={11} className="text-sky-400" />
+        1,240 SKUs conciliados
       </div>
     </div>
   );
