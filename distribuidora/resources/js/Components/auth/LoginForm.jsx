@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight, LogOut } from 'lucide-react';
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+  ArrowRight,
+  LogOut,
+  Boxes,
+} from 'lucide-react';
 import { Button } from '@/Components/ui/Button';
 import { Input } from '@/Components/ui/Input';
 import { Checkbox } from '@/Components/ui/Checkbox';
@@ -86,10 +96,18 @@ export default function LoginForm() {
 
   return (
     <>
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-900">Inicia sesión</h1>
-        <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
-          Un solo acceso para ventas, almacén, despacho y RR. HH.
+      <div className="mb-7 text-center">
+        <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-zinc-400">
+          Bienvenido a
+        </p>
+        <div className="mt-2 flex items-center justify-center gap-2">
+          <Boxes size={26} className="shrink-0 text-blue-600" strokeWidth={1.75} />
+          <span className="text-[26px] font-bold uppercase leading-none tracking-tight text-zinc-900">
+            Distribuidora
+          </span>
+        </div>
+        <p className="mx-auto mt-3 max-w-[17rem] text-[13px] leading-relaxed text-zinc-500">
+          Inicia sesión para gestionar ventas, almacén, despacho y RR. HH. desde un solo lugar.
         </p>
       </div>
 

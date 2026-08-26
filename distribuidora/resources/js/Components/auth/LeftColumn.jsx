@@ -22,10 +22,7 @@ export default function LeftColumn() {
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-600/25">
           <Boxes size={17} className="text-white" />
         </div>
-        <div className="leading-tight">
-          <p className="text-[15px] font-semibold tracking-tight text-zinc-900">Distribuidora SAC</p>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-blue-600/70">Suite operativa</p>
-        </div>
+        <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-400">Suite operativa</p>
       </header>
 
       <main className="relative flex flex-1 items-center justify-center py-10">
