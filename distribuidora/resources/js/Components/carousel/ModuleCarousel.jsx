@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Database, Warehouse, Truck, BriefcaseBusiness } from 'lucide-react';
+import { Database, Warehouse, Truck, PackageCheck, BriefcaseBusiness } from 'lucide-react';
 import ERPPreview from './modules/ERPPreview';
 import WMSPreview from './modules/WMSPreview';
 import TMSPreview from './modules/TMSPreview';
+import DMSPreview from './modules/DMSPreview';
 import HRISPreview from './modules/HRISPreview';
 
 const SLIDE_MS = 6000;
@@ -13,8 +14,8 @@ const modules = [
     label: 'ERP',
     accent: 'emerald',
     icon: Database,
-    title: 'Todo el negocio en un tablero',
-    text: 'Finanzas, compras, inventario y ventas con la misma información, sin cuadrar hojas de cálculo.',
+    title: 'Qué pedidos y ventas existen',
+    text: 'Finanzas, compras, inventario y ventas sobre la misma información. Aquí nace el pedido que recorre toda la operación.',
     chip: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
     bar: 'bg-emerald-400',
     Preview: ERPPreview,
@@ -24,8 +25,8 @@ const modules = [
     label: 'WMS',
     accent: 'sky',
     icon: Warehouse,
-    title: 'Almacén bajo control',
-    text: 'Ubicaciones, picking por olas y trazabilidad completa en tiempo real.',
+    title: 'Qué mercadería preparar y cargar',
+    text: 'Ubicaciones, picking por olas y trazabilidad completa. El almacén sabe qué sale antes de que llegue el camión.',
     chip: 'bg-sky-500/10 text-sky-300 border-sky-500/25',
     bar: 'bg-sky-400',
     Preview: WMSPreview,
@@ -35,11 +36,22 @@ const modules = [
     label: 'TMS',
     accent: 'violet',
     icon: Truck,
-    title: 'Rutas y entregas al día',
-    text: 'Planifica despachos, sigue cada unidad por GPS y confirma entregas desde el mismo panel.',
+    title: 'Qué vehículo, conductor y ruta',
+    text: 'Planifica despachos, asigna unidad y chofer, y sigue cada ruta por GPS desde el mismo panel.',
     chip: 'bg-violet-500/10 text-violet-300 border-violet-500/25',
     bar: 'bg-violet-400',
     Preview: TMSPreview,
+  },
+  {
+    id: 'dms',
+    label: 'DMS',
+    accent: 'rose',
+    icon: PackageCheck,
+    title: 'Qué pasó realmente en cada cliente',
+    text: 'Entrega, devolución, rechazo y recojo confirmados en campo. La liquidación del repartidor vuelve al almacén y a contabilidad.',
+    chip: 'bg-rose-500/10 text-rose-300 border-rose-500/25',
+    bar: 'bg-rose-400',
+    Preview: DMSPreview,
   },
   {
     id: 'hris',
@@ -153,8 +165,8 @@ export default function ModuleCarousel({ onActiveChange }) {
       </div>
 
       <p className="mt-5 text-[11px] leading-relaxed text-zinc-600">
-        Cuatro módulos, una sola base de datos. Lo que se vende lo descuenta el almacén, lo despacha
-        transporte, lo registra contabilidad y lo ejecuta tu equipo.
+        Cinco módulos, una sola base de datos. El pedido nace en ERP, el almacén lo prepara,
+        transporte lo lleva, DMS confirma qué pasó en el cliente y todo vuelve a inventario y caja.
       </p>
     </div>
   );

@@ -234,7 +234,7 @@ export default function LoginForm() {
 
       {/* módulos, visibles solo donde la columna derecha no se muestra */}
       <div className="mt-6 flex flex-wrap gap-1.5 border-t border-zinc-100 pt-5 lg:hidden">
-        {['ERP', 'WMS', 'TMS', 'RRHH'].map((m) => (
+        {['ERP', 'WMS', 'TMS', 'DMS', 'RRHH'].map((m) => (
           <span
             key={m}
             className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-1 text-[10px] font-semibold tracking-wide text-zinc-500"
