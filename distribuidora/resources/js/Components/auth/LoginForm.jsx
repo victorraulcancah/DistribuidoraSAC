@@ -86,10 +86,10 @@ export default function LoginForm() {
 
   return (
     <>
-      <div className="mb-7">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Inicia sesión</h1>
-        <p className="mt-1.5 text-sm text-zinc-500">
-          Un solo acceso para ventas, almacén, caja y despacho.
+      <div className="mb-6">
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900">Inicia sesión</h1>
+        <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
+          Un solo acceso para ventas, almacén, despacho y RR. HH.
         </p>
       </div>
 
@@ -201,25 +201,21 @@ export default function LoginForm() {
             <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
           </Button>
 
-          <div className="flex items-center gap-3 pt-1">
-            <span className="h-px flex-1 bg-zinc-200" />
-            <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-400">o</span>
-            <span className="h-px flex-1 bg-zinc-200" />
-          </div>
-
-          <button
-            type="button"
-            onClick={fillDemo}
-            className="w-full rounded-lg border border-dashed border-zinc-200 py-2.5 text-xs text-zinc-500 transition-colors hover:border-blue-300 hover:bg-blue-50/50 hover:text-blue-700"
-          >
-            Usar credenciales de prueba —{' '}
-            <span className="font-medium text-zinc-700">{DEMO.email}</span>
-          </button>
+          <p className="border-t border-zinc-100 pt-4 text-center text-[11px] text-zinc-400">
+            ¿Solo quieres echar un vistazo?{' '}
+            <button
+              type="button"
+              onClick={fillDemo}
+              className="font-medium text-blue-600 underline-offset-2 transition-colors hover:text-blue-700 hover:underline"
+            >
+              Usar credenciales de prueba
+            </button>
+          </p>
         </form>
       )}
 
       {/* módulos, visibles solo donde la columna derecha no se muestra */}
-      <div className="mt-8 flex flex-wrap gap-1.5 lg:hidden">
+      <div className="mt-6 flex flex-wrap gap-1.5 border-t border-zinc-100 pt-5 lg:hidden">
         {['ERP', 'WMS', 'TMS', 'RRHH'].map((m) => (
           <span
             key={m}

@@ -3,9 +3,20 @@ import LoginForm from './LoginForm';
 
 export default function LeftColumn() {
   return (
-    <div className="relative flex min-h-dvh w-full flex-col bg-white p-6 sm:p-10 lg:w-[46%]">
-      {/* resplandor azul muy sutil detrás del formulario */}
-      <div className="pointer-events-none absolute -left-32 top-1/3 h-[26rem] w-[26rem] rounded-full bg-blue-500/[0.07] blur-3xl" />
+    <div className="relative flex min-h-dvh w-full flex-col overflow-hidden bg-white p-6 sm:p-10 lg:w-[46%]">
+      {/* trama de puntos muy tenue, se desvanece hacia el centro */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: 'radial-gradient(rgb(212 212 216) 1px, transparent 1px)',
+          backgroundSize: '22px 22px',
+          opacity: 0.5,
+          maskImage: 'radial-gradient(ellipse 70% 55% at 50% 45%, transparent 40%, black 100%)',
+          WebkitMaskImage:
+            'radial-gradient(ellipse 70% 55% at 50% 45%, transparent 40%, black 100%)',
+        }}
+      />
 
       <header className="relative flex shrink-0 items-center gap-2.5">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-600/25">
@@ -18,7 +29,7 @@ export default function LeftColumn() {
       </header>
 
       <main className="relative flex flex-1 items-center justify-center py-10">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-[23rem] rounded-2xl bg-white p-7 ring-1 ring-zinc-200/80 shadow-xl shadow-zinc-900/[0.07]">
           <LoginForm />
         </div>
       </main>
