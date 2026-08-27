@@ -16,8 +16,8 @@ const modules = [
     icon: Database,
     title: 'Qué pedidos y ventas existen',
     text: 'Finanzas, compras, inventario y ventas sobre la misma información. Aquí nace el pedido que recorre toda la operación.',
-    chip: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    bar: 'bg-emerald-500',
+    chip: 'bg-[#2CD431]/10 text-[#1B8A1F] border-[#2CD431]/40',
+    bar: 'bg-[#2CD431]',
     Preview: ERPPreview,
   },
   {

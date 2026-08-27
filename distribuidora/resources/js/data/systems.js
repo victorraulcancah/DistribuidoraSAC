@@ -13,7 +13,7 @@ export const systems = [
     full: 'Planificación de Recursos Empresariales',
     description: 'Finanzas, compras, inventario y ventas sobre la misma información.',
     modules: 17,
-    card: 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700',
+    card: 'bg-gradient-to-br from-[#2CD431] to-[#22AB26] hover:from-[#27BE2B] hover:to-[#1D9421]',
     iconBox: 'bg-white/15 text-white border-white/30',
     badge: 'bg-white/20 text-white border-white/30',
   },

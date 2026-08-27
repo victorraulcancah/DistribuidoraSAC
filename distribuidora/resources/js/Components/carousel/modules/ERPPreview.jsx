@@ -13,7 +13,7 @@ export default function ERPPreview() {
           <div key={s.label} className="rounded-lg border border-zinc-200 bg-white shadow-sm shadow-zinc-900/[0.04] p-3">
             <p className="text-[10px] uppercase tracking-wider text-zinc-500">{s.label}</p>
             <p className="mt-1 text-sm font-semibold text-zinc-900">{s.value}</p>
-            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-emerald-600">
+            <p className="mt-0.5 flex items-center gap-1 text-[10px] text-[#1B8A1F]">
               <TrendingUp size={10} />
               {s.delta}
             </p>
@@ -22,7 +22,7 @@ export default function ERPPreview() {
       </div>
       <div className="flex h-14 items-end gap-1.5 rounded-lg border border-zinc-200 bg-white shadow-sm shadow-zinc-900/[0.04] p-3">
         {[40, 65, 45, 80, 55, 95, 70].map((h, i) => (
-          <div key={i} className="flex-1 rounded-sm bg-emerald-500/70" style={{ height: `${h}%` }} />
+          <div key={i} className="flex-1 rounded-sm bg-[#2CD431]/75" style={{ height: `${h}%` }} />
         ))}
       </div>
     </div>

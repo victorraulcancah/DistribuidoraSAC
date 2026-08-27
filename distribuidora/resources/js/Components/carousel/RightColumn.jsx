@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ModuleCarousel from './ModuleCarousel';
 
 const glowByAccent = {
-  emerald: 'bg-emerald-500/10',
+  emerald: 'bg-[#2CD431]/10',
   sky: 'bg-sky-500/10',
   violet: 'bg-violet-500/10',
   rose: 'bg-rose-500/10',

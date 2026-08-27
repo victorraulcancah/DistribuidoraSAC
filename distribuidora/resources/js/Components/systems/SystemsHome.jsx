@@ -45,6 +45,17 @@ export default function SystemsHome({ user, onEnter, onLogout }) {
 
 function SystemCard({ sys, onEnter }) {
   const Icon = sys.icon;
+  // Las tarjetas claras necesitan tinta oscura para seguir siendo legibles.
+  const dark = sys.ink === 'dark';
+  const ink = {
+    title: dark ? 'text-zinc-900' : 'text-white',
+    sub: dark ? 'text-zinc-900/70' : 'text-white/70',
+    desc: dark ? 'text-zinc-900/60' : 'text-white/60',
+    action: dark
+      ? 'text-zinc-900/70 group-hover:text-zinc-900'
+      : 'text-white/70 group-hover:text-white',
+  };
+
   return (
     <button
       type="button"
@@ -58,9 +69,9 @@ function SystemCard({ sys, onEnter }) {
           <Icon size={22} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-base font-bold tracking-tight text-white">{sys.id}</p>
-          <p className="truncate text-xs text-white/70">{sys.full}</p>
-          <p className="mt-0.5 truncate text-xs text-white/60">{sys.description}</p>
+          <p className={`text-base font-bold tracking-tight ${ink.title}`}>{sys.id}</p>
+          <p className={`truncate text-xs ${ink.sub}`}>{sys.full}</p>
+          <p className={`mt-0.5 truncate text-xs ${ink.desc}`}>{sys.description}</p>
         </div>
       </div>
 
@@ -70,7 +81,9 @@ function SystemCard({ sys, onEnter }) {
         >
           {sys.modules} módulos
         </span>
-        <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-white/70 transition-colors group-hover:text-white">
+        <span
+          className={`flex shrink-0 items-center gap-1 text-xs font-medium transition-colors ${ink.action}`}
+        >
           Entrar
           <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
         </span>
