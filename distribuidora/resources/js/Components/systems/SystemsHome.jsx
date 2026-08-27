@@ -49,25 +49,32 @@ function SystemCard({ sys, onEnter }) {
     <button
       type="button"
       onClick={() => onEnter(sys.id)}
-      className={`group flex items-center gap-4 rounded-2xl p-3.5 text-left shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg ${sys.card}`}
+      className={`group flex flex-col gap-4 rounded-2xl p-4 text-left shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg ${sys.card}`}
     >
-      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${sys.iconBox}`}>
-        <Icon size={22} />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <p className="text-base font-bold tracking-tight text-white">{sys.id}</p>
-          <span className={`truncate rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${sys.badge}`}>
-            {sys.modules} módulos
-          </span>
+      <div className="flex items-start gap-3.5">
+        <div
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${sys.iconBox}`}
+        >
+          <Icon size={22} />
         </div>
-        <p className="truncate text-xs text-white/70">{sys.full}</p>
-        <p className="mt-0.5 truncate text-xs text-white/60">{sys.description}</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-base font-bold tracking-tight text-white">{sys.id}</p>
+          <p className="truncate text-xs text-white/70">{sys.full}</p>
+          <p className="mt-0.5 truncate text-xs text-white/60">{sys.description}</p>
+        </div>
       </div>
-      <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-white/70 transition-colors group-hover:text-white">
-        Entrar
-        <ArrowRight size={13} />
-      </span>
+
+      <div className="flex items-center justify-between gap-3">
+        <span
+          className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-semibold tracking-wide ${sys.badge}`}
+        >
+          {sys.modules} módulos
+        </span>
+        <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-white/70 transition-colors group-hover:text-white">
+          Entrar
+          <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </div>
     </button>
   );
 }
