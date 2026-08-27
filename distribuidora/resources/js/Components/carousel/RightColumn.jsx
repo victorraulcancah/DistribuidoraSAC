@@ -2,25 +2,26 @@ import { useState } from 'react';
 import ModuleCarousel from './ModuleCarousel';
 
 const glowByAccent = {
-  emerald: 'bg-emerald-500/15',
-  sky: 'bg-sky-500/15',
-  violet: 'bg-violet-500/15',
-  rose: 'bg-rose-500/15',
-  amber: 'bg-amber-500/15',
+  emerald: 'bg-emerald-500/10',
+  sky: 'bg-sky-500/10',
+  violet: 'bg-violet-500/10',
+  rose: 'bg-rose-500/10',
+  amber: 'bg-amber-500/10',
+  teal: 'bg-teal-500/10',
 };
 
 export default function RightColumn() {
   const [accent, setAccent] = useState('emerald');
 
   return (
-    <div className="relative hidden overflow-hidden border-l border-zinc-900 bg-zinc-950 lg:flex lg:w-[54%] lg:items-center lg:justify-center">
-      {/* rejilla técnica de fondo */}
+    <div className="relative hidden overflow-hidden border-l border-zinc-200 bg-white lg:flex lg:w-[54%] lg:items-center lg:justify-center">
+      {/* cuadrícula técnica negra, se desvanece hacia los bordes */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        className="pointer-events-none absolute inset-0 opacity-[0.14]"
         aria-hidden="true"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgb(39 39 42) 1px, transparent 1px), linear-gradient(to bottom, rgb(39 39 42) 1px, transparent 1px)',
+            'linear-gradient(to right, rgb(0 0 0) 1px, transparent 1px), linear-gradient(to bottom, rgb(0 0 0) 1px, transparent 1px)',
           backgroundSize: '56px 56px',
           maskImage: 'radial-gradient(ellipse 80% 60% at 50% 45%, black 30%, transparent 75%)',
           WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 45%, black 30%, transparent 75%)',
@@ -34,7 +35,7 @@ export default function RightColumn() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-zinc-100/[0.03] blur-3xl"
+        className="pointer-events-none absolute -bottom-40 -left-24 h-96 w-96 rounded-full bg-zinc-900/[0.04] blur-3xl"
       />
 
       <div className="relative z-10 w-full max-w-lg px-10">
