@@ -43,7 +43,6 @@ export default function LoginForm() {
     if (!email) next.email = 'Ingresa tu correo.';
     else if (!/^\S+@\S+\.\S+$/.test(email)) next.email = 'Ese correo no parece válido.';
     if (!password) next.password = 'Ingresa tu contraseña.';
-    else if (password.length < 8) next.password = 'Debe tener al menos 8 caracteres.';
     return next;
   };
 
@@ -57,10 +56,11 @@ export default function LoginForm() {
     setLoading(true);
     try {
       const { data } = await axios.post('/api/auth/login', { email, password, remember });
-      if (data.token) localStorage.setItem('auth_token', data.token);
+      const payload = data.data ?? data;
+      if (payload.token) localStorage.setItem('auth_token', payload.token);
       if (remember) localStorage.setItem('remember_credentials', JSON.stringify({ email }));
       else localStorage.removeItem('remember_credentials');
-      setUser(data.user ?? null);
+      setUser(payload.user ?? null);
       setStatus({ type: 'success', message: 'Bienvenido de vuelta. Redirigiendo al panel...' });
     } catch (err) {
       if (err.response?.status === 422 && err.response.data?.errors) {
