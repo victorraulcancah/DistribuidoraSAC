@@ -56,12 +56,12 @@ const modules = [
   {
     id: 'hris',
     label: 'RRHH',
-    accent: 'teal',
+    accent: 'amber',
     icon: BriefcaseBusiness,
     title: 'Tu gente, del ingreso a la nómina',
     text: 'Empleados, asistencia, vacaciones, nómina y desempeño. Un solo lugar para todo el equipo.',
-    chip: 'bg-teal-500/10 text-teal-300 border-teal-500/25',
-    bar: 'bg-teal-400',
+    chip: 'bg-amber-500/10 text-amber-300 border-amber-500/25',
+    bar: 'bg-amber-400',
     Preview: HRISPreview,
   },
 ];

@@ -6,7 +6,7 @@ const glowByAccent = {
   sky: 'bg-sky-500/15',
   violet: 'bg-violet-500/15',
   rose: 'bg-rose-500/15',
-  teal: 'bg-teal-500/15',
+  amber: 'bg-amber-500/15',
 };
 
 export default function RightColumn() {

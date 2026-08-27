@@ -18,7 +18,7 @@ export default function HRISPreview() {
             <p className="truncate text-[11px] font-medium text-zinc-200">{p.name}</p>
             <p className="truncate text-[10px] text-zinc-500">{p.role}</p>
           </div>
-          <span className={`shrink-0 text-[10px] ${p.ok ? 'text-teal-300' : 'text-amber-300'}`}>
+          <span className={`shrink-0 text-[10px] ${p.ok ? 'text-amber-300' : 'text-amber-300'}`}>
             {p.status}
           </span>
         </div>
