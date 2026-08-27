@@ -22,9 +22,14 @@ export default function SystemsHome({ user, onEnter }) {
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {systems.map((sys) => (
+          {systems.slice(0, 3).map((sys) => (
             <SystemCard key={sys.id} sys={sys} onEnter={onEnter} />
           ))}
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-2 lg:col-span-3 lg:mx-auto lg:w-2/3">
+            {systems.slice(3).map((sys) => (
+              <SystemCard key={sys.id} sys={sys} onEnter={onEnter} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
