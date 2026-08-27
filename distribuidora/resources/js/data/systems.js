@@ -53,7 +53,7 @@ export const systems = [
     full: 'Recursos Humanos (RR. HH.)',
     description: 'Empleados, asistencia, nómina y evaluación de desempeño.',
     modules: 19,
-    card: 'bg-gradient-to-br from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700',
+    card: 'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700',
     iconBox: 'bg-white/15 text-white border-white/30',
     badge: 'bg-white/20 text-white border-white/30',
   },

@@ -21,7 +21,7 @@ export default function SystemsHome({ user, onEnter }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {systems.map((sys) => (
             <SystemCard key={sys.id} sys={sys} onEnter={onEnter} />
           ))}
@@ -37,29 +37,25 @@ function SystemCard({ sys, onEnter }) {
     <button
       type="button"
       onClick={() => onEnter(sys.id)}
-      className={`group flex flex-col items-start gap-4 rounded-2xl p-5 text-left shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg ${sys.card}`}
+      className={`group flex items-center gap-4 rounded-2xl p-3.5 text-left shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg ${sys.card}`}
     >
-      <div className="flex w-full items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`flex h-11 w-11 items-center justify-center rounded-xl border ${sys.iconBox}`}>
-            <Icon size={22} />
-          </div>
-          <div>
-            <p className="text-lg font-bold tracking-tight text-white">{sys.id}</p>
-            <p className="text-xs text-white/70">{sys.full}</p>
-          </div>
+      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${sys.iconBox}`}>
+        <Icon size={22} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <p className="text-base font-bold tracking-tight text-white">{sys.id}</p>
+          <span className={`truncate rounded-md border px-1.5 py-0.5 text-[10px] font-semibold tracking-wide ${sys.badge}`}>
+            {sys.modules} módulos
+          </span>
         </div>
+        <p className="truncate text-xs text-white/70">{sys.full}</p>
+        <p className="mt-0.5 truncate text-xs text-white/60">{sys.description}</p>
       </div>
-      <p className="text-sm leading-relaxed text-white/80">{sys.description}</p>
-      <div className="flex w-full items-center justify-between gap-2">
-        <span className={`rounded-md border px-2 py-1 text-[10px] font-semibold tracking-wide ${sys.badge}`}>
-          {sys.modules} módulos
-        </span>
-        <span className="flex items-center gap-1 text-xs font-medium text-white/70 transition-colors group-hover:text-white">
-          Entrar
-          <ArrowRight size={13} />
-        </span>
-      </div>
+      <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-white/70 transition-colors group-hover:text-white">
+        Entrar
+        <ArrowRight size={13} />
+      </span>
     </button>
   );
 }
