@@ -1,7 +1,7 @@
 import { Banknote } from 'lucide-react';
 
 const stops = [
-  { client: 'Bodega San Juan', result: 'Entregado', tone: 'text-rose-600' },
+  { client: 'Bodega San Juan', result: 'Entregado', tone: 'text-[rgb(var(--sys-ink-rgb))]' },
   { client: 'Minimarket La Rosa', result: 'Devolución', tone: 'text-amber-600' },
   { client: 'Puesto 14 · Mercado', result: 'Rechazo', tone: 'text-zinc-500' },
 ];
@@ -17,10 +17,10 @@ export default function DMSPreview() {
       ))}
       <div className="flex items-center justify-between border-t border-dashed border-zinc-200 pt-2">
         <span className="flex items-center gap-1.5 text-[10px] text-zinc-500">
-          <Banknote size={11} className="text-rose-500" />
+          <Banknote size={11} className="text-[rgb(var(--sys-rgb))]" />
           Liquidación del repartidor
         </span>
-        <span className="text-sm font-semibold tabular-nums text-rose-600">S/ 1,240</span>
+        <span className="text-sm font-semibold tabular-nums text-[rgb(var(--sys-ink-rgb))]">S/ 1,240</span>
       </div>
     </div>
   );

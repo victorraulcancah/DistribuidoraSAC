@@ -24,7 +24,7 @@ export default function HRISPreview() {
         </div>
       ))}
       <div className="flex items-center gap-1.5 border-t border-zinc-200 pt-2 text-[10px] text-zinc-500">
-        <Banknote size={11} className="text-teal-500" />
+        <Banknote size={11} className="text-[rgb(var(--sys-rgb))]" />
         Nómina del mes: S/ 48,200 · 32 empleados
       </div>
     </div>

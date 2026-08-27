@@ -12,7 +12,7 @@ export default function TMSPreview() {
           <div className="flex flex-col items-center">
             <span
               className={`h-2 w-2 shrink-0 rounded-full ${
-                s.done ? 'bg-violet-500' : 'border border-zinc-300 bg-white'
+                s.done ? 'bg-[rgb(var(--sys-rgb))]' : 'border border-zinc-300 bg-white'
               }`}
             />
             {i < stops.length - 1 && <span className="w-px flex-1 bg-zinc-100" />}

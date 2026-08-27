@@ -6,55 +6,66 @@ import {
   BriefcaseBusiness,
 } from 'lucide-react';
 
+/**
+ * Fuente única de verdad de los sistemas.
+ *
+ * `color` es lo ÚNICO que define la identidad visual: de ese hex se derivan
+ * la tarjeta, el panel, la pestaña del carrusel, la barra de progreso, el
+ * resplandor y los gráficos (ver lib/systemTheme.js). Cambiar el hex aquí
+ * repinta el sistema entero.
+ */
 export const systems = [
   {
     id: 'ERP',
+    color: '#2CD431',
     icon: LayoutDashboard,
     full: 'Planificación de Recursos Empresariales',
     description: 'Finanzas, compras, inventario y ventas sobre la misma información.',
     modules: 17,
-    card: 'bg-gradient-to-br from-[#2CD431] to-[#22AB26] hover:from-[#27BE2B] hover:to-[#1D9421]',
-    iconBox: 'bg-white/15 text-white border-white/30',
-    badge: 'bg-white/20 text-white border-white/30',
+    // Textos del carrusel del login
+    headline: 'Qué pedidos y ventas existen',
+    pitch: 'Finanzas, compras, inventario y ventas sobre la misma información. Aquí nace el pedido que recorre toda la operación.',
   },
   {
     id: 'WMS',
+    color: '#0EA5E9',
     icon: Warehouse,
     full: 'Sistema de Gestión de Almacenes',
     description: 'Recepción, almacenamiento, picking y despacho de mercadería.',
     modules: 13,
-    card: 'bg-gradient-to-br from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700',
-    iconBox: 'bg-white/15 text-white border-white/30',
-    badge: 'bg-white/20 text-white border-white/30',
+    headline: 'Qué mercadería preparar y cargar',
+    pitch: 'Ubicaciones, picking por olas y trazabilidad completa. El almacén sabe qué sale antes de que llegue el camión.',
   },
   {
     id: 'TMS',
+    color: '#8B5CF6',
     icon: Truck,
     full: 'Sistema de Gestión de Transporte',
     description: 'Flota, rutas, tracking y liquidación de reparto.',
     modules: 12,
-    card: 'bg-gradient-to-br from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700',
-    iconBox: 'bg-white/15 text-white border-white/30',
-    badge: 'bg-white/20 text-white border-white/30',
+    headline: 'Qué vehículo, conductor y ruta',
+    pitch: 'Planifica despachos, asigna unidad y chofer, y sigue cada ruta por GPS desde el mismo panel.',
   },
   {
     id: 'DMS',
+    color: '#F43F5E',
     icon: PackageCheck,
     full: 'Distribución y Despacho',
     description: 'Entregas, devoluciones y rechazos confirmados en campo.',
     modules: 8,
-    card: 'bg-gradient-to-br from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700',
-    iconBox: 'bg-white/15 text-white border-white/30',
-    badge: 'bg-white/20 text-white border-white/30',
+    headline: 'Qué pasó realmente en cada cliente',
+    pitch: 'Entrega, devolución, rechazo y recojo confirmados en campo. La liquidación del repartidor vuelve al almacén y a contabilidad.',
   },
   {
     id: 'RRHH',
+    color: '#F59E0B',
     icon: BriefcaseBusiness,
     full: 'Recursos Humanos (RR. HH.)',
     description: 'Empleados, asistencia, nómina y evaluación de desempeño.',
     modules: 19,
-    card: 'bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700',
-    iconBox: 'bg-white/15 text-white border-white/30',
-    badge: 'bg-white/20 text-white border-white/30',
+    headline: 'Tu gente, del ingreso a la nómina',
+    pitch: 'Empleados, asistencia, vacaciones, nómina y desempeño. Un solo lugar para todo el equipo.',
   },
 ];
+
+export const getSystem = (id) => systems.find((s) => s.id === id);

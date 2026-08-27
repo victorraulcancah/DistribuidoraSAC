@@ -1,20 +1,16 @@
 import { useState } from 'react';
+import { systems } from '@/data/systems';
+import { systemTheme } from '@/lib/systemTheme';
 import ModuleCarousel from './ModuleCarousel';
 
-const glowByAccent = {
-  emerald: 'bg-[#2CD431]/10',
-  sky: 'bg-sky-500/10',
-  violet: 'bg-violet-500/10',
-  rose: 'bg-rose-500/10',
-  amber: 'bg-amber-500/10',
-  teal: 'bg-teal-500/10',
-};
-
 export default function RightColumn() {
-  const [accent, setAccent] = useState('emerald');
+  const [system, setSystem] = useState(systems[0]);
 
   return (
-    <div className="relative hidden overflow-hidden border-l border-zinc-200 bg-white lg:flex lg:w-[54%] lg:items-center lg:justify-center">
+    <div
+      style={systemTheme(system.color)}
+      className="relative hidden overflow-hidden border-l border-zinc-200 bg-white lg:flex lg:w-[54%] lg:items-center lg:justify-center"
+    >
       {/* cuadrícula técnica negra, se desvanece hacia los bordes */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.14]"
@@ -31,7 +27,7 @@ export default function RightColumn() {
       {/* resplandor que cambia con el módulo activo */}
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full blur-3xl transition-colors duration-1000 ${glowByAccent[accent]}`}
+        className="pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-[rgb(var(--sys-rgb)/0.1)] blur-3xl transition-colors duration-1000"
       />
       <div
         aria-hidden="true"
@@ -39,7 +35,7 @@ export default function RightColumn() {
       />
 
       <div className="relative z-10 w-full max-w-lg px-10">
-        <ModuleCarousel onActiveChange={(module) => setAccent(module.accent)} />
+        <ModuleCarousel onActiveChange={setSystem} />
       </div>
     </div>
   );

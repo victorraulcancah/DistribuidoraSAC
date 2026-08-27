@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Database, Warehouse, Truck, PackageCheck, BriefcaseBusiness } from 'lucide-react';
+import { systems } from '@/data/systems';
+import SystemThemeProvider from '@/Components/systems/SystemThemeProvider';
+import SysProgressBar from '@/Components/sys/SysProgressBar';
 import ERPPreview from './modules/ERPPreview';
 import WMSPreview from './modules/WMSPreview';
 import TMSPreview from './modules/TMSPreview';
@@ -8,63 +10,14 @@ import HRISPreview from './modules/HRISPreview';
 
 const SLIDE_MS = 6000;
 
-const modules = [
-  {
-    id: 'erp',
-    label: 'ERP',
-    accent: 'emerald',
-    icon: Database,
-    title: 'Qué pedidos y ventas existen',
-    text: 'Finanzas, compras, inventario y ventas sobre la misma información. Aquí nace el pedido que recorre toda la operación.',
-    chip: 'bg-[#2CD431]/10 text-[#1B8A1F] border-[#2CD431]/40',
-    bar: 'bg-[#2CD431]',
-    Preview: ERPPreview,
-  },
-  {
-    id: 'wms',
-    label: 'WMS',
-    accent: 'sky',
-    icon: Warehouse,
-    title: 'Qué mercadería preparar y cargar',
-    text: 'Ubicaciones, picking por olas y trazabilidad completa. El almacén sabe qué sale antes de que llegue el camión.',
-    chip: 'bg-sky-50 text-sky-700 border-sky-200',
-    bar: 'bg-sky-500',
-    Preview: WMSPreview,
-  },
-  {
-    id: 'tms',
-    label: 'TMS',
-    accent: 'violet',
-    icon: Truck,
-    title: 'Qué vehículo, conductor y ruta',
-    text: 'Planifica despachos, asigna unidad y chofer, y sigue cada ruta por GPS desde el mismo panel.',
-    chip: 'bg-violet-50 text-violet-700 border-violet-200',
-    bar: 'bg-violet-500',
-    Preview: TMSPreview,
-  },
-  {
-    id: 'dms',
-    label: 'DMS',
-    accent: 'rose',
-    icon: PackageCheck,
-    title: 'Qué pasó realmente en cada cliente',
-    text: 'Entrega, devolución, rechazo y recojo confirmados en campo. La liquidación del repartidor vuelve al almacén y a contabilidad.',
-    chip: 'bg-rose-50 text-rose-700 border-rose-200',
-    bar: 'bg-rose-500',
-    Preview: DMSPreview,
-  },
-  {
-    id: 'hris',
-    label: 'RRHH',
-    accent: 'amber',
-    icon: BriefcaseBusiness,
-    title: 'Tu gente, del ingreso a la nómina',
-    text: 'Empleados, asistencia, vacaciones, nómina y desempeño. Un solo lugar para todo el equipo.',
-    chip: 'bg-amber-50 text-amber-700 border-amber-200',
-    bar: 'bg-amber-500',
-    Preview: HRISPreview,
-  },
-];
+// Lo único que el carrusel añade a `systems`: qué maqueta ilustra cada uno.
+const previews = {
+  ERP: ERPPreview,
+  WMS: WMSPreview,
+  TMS: TMSPreview,
+  DMS: DMSPreview,
+  RRHH: HRISPreview,
+};
 
 export default function ModuleCarousel({ onActiveChange }) {
   const [active, setActive] = useState(0);
@@ -75,7 +28,7 @@ export default function ModuleCarousel({ onActiveChange }) {
   useEffect(() => {
     elapsed.current = 0;
     setProgress(0);
-    onActiveChange?.(modules[active]);
+    onActiveChange?.(systems[active]);
   }, [active, onActiveChange]);
 
   useEffect(() => {
@@ -87,85 +40,79 @@ export default function ModuleCarousel({ onActiveChange }) {
       last = now;
       const pct = Math.min(100, (elapsed.current / SLIDE_MS) * 100);
       setProgress(pct);
-      if (pct >= 100) setActive((a) => (a + 1) % modules.length);
+      if (pct >= 100) setActive((a) => (a + 1) % systems.length);
     }, 40);
     return () => clearInterval(id);
   }, [active, paused]);
 
   return (
     <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      {/* selector de módulos */}
-      <div className="mb-9 flex gap-1.5" role="tablist" aria-label="Módulos del sistema">
-        {modules.map((m, i) => {
-          const Icon = m.icon;
+      {/* selector de sistemas */}
+      <div className="mb-9 flex gap-1.5" role="tablist" aria-label="Sistemas de la suite">
+        {systems.map((sys, i) => {
+          const Icon = sys.icon;
           const isActive = i === active;
           return (
-            <button
-              key={m.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              aria-controls={`panel-${m.id}`}
-              onClick={() => setActive(i)}
-              className={`flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border px-1 py-2 text-[11px] font-semibold tracking-wide transition-all duration-300 ${
-                isActive
-                  ? m.chip
-                  : 'border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-600'
-              }`}
-            >
-              <Icon size={13} className="shrink-0" aria-hidden="true" />
-              {m.label}
-            </button>
+            <SystemThemeProvider key={sys.id} system={sys} className="flex-1">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                aria-controls={`panel-${sys.id}`}
+                onClick={() => setActive(i)}
+                className={`flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border px-1 py-2 text-[11px] font-semibold tracking-wide transition-all duration-300 ${
+                  isActive
+                    ? 'border-[rgb(var(--sys-rgb)/0.4)] bg-[rgb(var(--sys-rgb)/0.12)] text-[rgb(var(--sys-ink-rgb))]'
+                    : 'border-zinc-200 text-zinc-400 hover:border-zinc-300 hover:text-zinc-600'
+                }`}
+              >
+                <Icon size={13} className="shrink-0" aria-hidden="true" />
+                {sys.id}
+              </button>
+            </SystemThemeProvider>
           );
         })}
       </div>
 
-      {/* contenido del módulo activo */}
+      {/* contenido del sistema activo */}
       <div className="relative min-h-[22rem]">
-        {modules.map((m, i) => {
-          const Preview = m.Preview;
+        {systems.map((sys, i) => {
+          const Preview = previews[sys.id];
           const isActive = i === active;
           return (
-            <div
-              key={m.id}
-              id={`panel-${m.id}`}
-              role="tabpanel"
-              aria-hidden={!isActive}
+            <SystemThemeProvider
+              key={sys.id}
+              system={sys}
               className={`absolute inset-x-0 top-0 transition-all duration-700 ease-out ${
-                isActive
-                  ? 'translate-y-0 opacity-100'
-                  : 'pointer-events-none translate-y-4 opacity-0'
+                isActive ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
               }`}
             >
-              <h2 className="text-pretty text-[27px] font-semibold leading-[1.15] tracking-tight text-zinc-900">
-                {m.title}
-              </h2>
-              <p className="mt-3 max-w-sm text-sm leading-relaxed text-zinc-500">{m.text}</p>
-              <div className="mt-7">
-                <Preview />
+              <div id={`panel-${sys.id}`} role="tabpanel" aria-hidden={!isActive}>
+                <h2 className="text-pretty text-[27px] font-semibold leading-[1.15] tracking-tight text-zinc-900">
+                  {sys.headline}
+                </h2>
+                <p className="mt-3 max-w-sm text-sm leading-relaxed text-zinc-500">{sys.pitch}</p>
+                <div className="mt-7">{Preview && <Preview />}</div>
               </div>
-            </div>
+            </SystemThemeProvider>
           );
         })}
       </div>
 
       {/* barras de progreso */}
       <div className="mt-9 flex gap-2">
-        {modules.map((m, i) => (
-          <div key={m.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-zinc-200">
-            <div
-              className={`h-full rounded-full ${m.bar}`}
-              style={{
-                width: i === active ? `${progress}%` : i < active ? '100%' : '0%',
-                opacity: i === active ? 1 : 0.35,
-              }}
+        {systems.map((sys, i) => (
+          <SystemThemeProvider key={sys.id} system={sys} className="flex-1">
+            <SysProgressBar
+              value={i === active ? progress : i < active ? 100 : 0}
+              className={i === active ? '' : 'opacity-35'}
             />
-          </div>
+          </SystemThemeProvider>
         ))}
       </div>
 
       <p className="mt-5 text-[11px] leading-relaxed text-zinc-400">
-        Cinco módulos, una sola base de datos. El pedido nace en ERP, el almacén lo prepara,
+        Cinco sistemas, una sola base de datos. El pedido nace en ERP, el almacén lo prepara,
         transporte lo lleva, DMS confirma qué pasó en el cliente y todo vuelve a inventario y caja.
       </p>
     </div>
