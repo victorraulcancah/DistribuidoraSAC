@@ -1,12 +1,14 @@
 import { Boxes, ArrowRight } from 'lucide-react';
 import { systems } from '@/data/systems';
 import UserMenu from './UserMenu';
+import NotificationsMenu from './NotificationsMenu';
 
 export default function SystemsHome({ user, onEnter, onLogout }) {
   return (
     <div className="flex min-h-dvh w-full flex-col bg-white p-8 font-sans antialiased">
-      <header className="flex shrink-0 justify-end">
+      <header className="flex shrink-0 items-center justify-end gap-2.5">
         <UserMenu user={user} onLogout={onLogout} />
+        <NotificationsMenu />
       </header>
 
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center py-8">
