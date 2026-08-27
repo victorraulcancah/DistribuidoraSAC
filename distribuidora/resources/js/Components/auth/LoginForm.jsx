@@ -18,7 +18,7 @@ import { Label } from '@/Components/ui/Label';
 
 const DEMO = { email: 'admin@distribuidora.com', password: 'password123' };
 
-export default function LoginForm() {
+export default function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -61,6 +61,7 @@ export default function LoginForm() {
       if (remember) localStorage.setItem('remember_credentials', JSON.stringify({ email }));
       else localStorage.removeItem('remember_credentials');
       setUser(payload.user ?? null);
+      onLogin?.(payload.user ?? null);
       setStatus({ type: 'success', message: 'Bienvenido de vuelta. Redirigiendo al panel...' });
     } catch (err) {
       if (err.response?.status === 422 && err.response.data?.errors) {

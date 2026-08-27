@@ -1,7 +1,7 @@
 import { Boxes } from 'lucide-react';
 import LoginForm from './LoginForm';
 
-export default function LeftColumn() {
+export default function LeftColumn({ onLogin }) {
   return (
     <div className="relative flex min-h-dvh w-full flex-col overflow-hidden bg-white p-6 sm:p-10 lg:w-[46%]">
       {/* trama de puntos muy tenue, se desvanece hacia el centro */}
@@ -27,7 +27,7 @@ export default function LeftColumn() {
 
       <main className="relative flex flex-1 items-center justify-center py-10">
         <div className="w-full max-w-[23rem] rounded-2xl bg-white p-7 ring-1 ring-zinc-200/80 shadow-xl shadow-zinc-900/[0.07]">
-          <LoginForm />
+          <LoginForm onLogin={onLogin} />
         </div>
       </main>
 
