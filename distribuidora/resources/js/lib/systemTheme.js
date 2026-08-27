@@ -59,15 +59,19 @@ const channels = ({ r, g, b }) => `${r} ${g} ${b}`;
  * Devuelve el objeto `style` con las variables del sistema.
  * Se aplica a un contenedor y todo el subárbol lo hereda por cascada.
  */
-export function systemTheme(color) {
+export function systemTheme(color, ink = 'light') {
   const base = hexToRgb(color);
   const lum = luminance(base);
 
-  // Texto que va ENCIMA del color sólido: el que mejor contraste dé.
-  // Esto evita tener que decidir a mano si una tarjeta lleva tinta clara u oscura.
-  const onLight = contrast(lum, luminance({ r: 24, g: 24, b: 27 }));
-  const onDark = contrast(lum, luminance({ r: 255, g: 255, b: 255 }));
-  const useDarkInk = onLight >= onDark;
+  // Tinta que va ENCIMA del color sólido.
+  //   'light' (por defecto) → siempre blanca, para que las tarjetas se vean
+  //                           uniformes aunque un color sea muy luminoso.
+  //   'dark'                → siempre oscura.
+  //   'auto'                → la que más contraste dé (WCAG).
+  const autoDark =
+    contrast(lum, luminance({ r: 24, g: 24, b: 27 })) >=
+    contrast(lum, luminance({ r: 255, g: 255, b: 255 }));
+  const useDarkInk = ink === 'auto' ? autoDark : ink === 'dark';
   const on = useDarkInk ? '#18181b' : '#ffffff';
   // Los canales sueltos hacen falta aparte: `bg-[var(--x)]/15` no funciona en
   // Tailwind si la variable trae un hex; con `rgb(var(--x-rgb)/0.15)` sí.

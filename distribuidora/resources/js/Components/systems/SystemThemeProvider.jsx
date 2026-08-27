@@ -14,7 +14,10 @@ export function useSystem() {
  * componente por componente.
  */
 export default function SystemThemeProvider({ system, as: Tag = 'div', className, children }) {
-  const style = useMemo(() => systemTheme(system?.color ?? '#3f3f46'), [system?.color]);
+  const style = useMemo(
+    () => systemTheme(system?.color ?? '#3f3f46', system?.ink),
+    [system?.color, system?.ink]
+  );
 
   return (
     <SystemContext.Provider value={system}>
