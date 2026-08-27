@@ -1,10 +1,15 @@
 import { Boxes, ArrowRight } from 'lucide-react';
 import { systems } from '@/data/systems';
+import UserMenu from './UserMenu';
 
-export default function SystemsHome({ user, onEnter }) {
+export default function SystemsHome({ user, onEnter, onLogout }) {
   return (
-    <div className="flex min-h-dvh w-full flex-col items-center justify-center bg-white p-8 font-sans antialiased">
-      <div className="mx-auto w-full max-w-6xl">
+    <div className="flex min-h-dvh w-full flex-col bg-white p-8 font-sans antialiased">
+      <header className="flex shrink-0 justify-end">
+        <UserMenu user={user} onLogout={onLogout} />
+      </header>
+
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center py-8">
         <div className="mb-10 flex flex-col items-center text-center">
           <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-xl shadow-blue-600/25">
             <Boxes size={30} className="text-white" />

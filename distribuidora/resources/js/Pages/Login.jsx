@@ -13,7 +13,7 @@ export default function Login() {
   }
 
   if (user) {
-    return <SystemsHome user={user} onEnter={setSystemId} />;
+    return <SystemsHome user={user} onEnter={setSystemId} onLogout={() => setUser(null)} />;
   }
 
   return (
