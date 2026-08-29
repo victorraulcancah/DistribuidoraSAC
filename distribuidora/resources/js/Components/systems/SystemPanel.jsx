@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Menu, Pencil, Trash2, UserRound } from 'lucide-react';
 import { getSystem } from '@/data/systems';
-import { findModule } from '@/data/modules';
+import { findModule, firstModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
 import UserMenu from './UserMenu';
 import NotificationsMenu from './NotificationsMenu';
@@ -46,7 +46,7 @@ const clientesColumns = [
 
 export default function SystemPanel({ systemId, user, onExit, onLogout, onSwitchSystem }) {
   const system = getSystem(systemId);
-  const [activeModule, setActiveModule] = useState('dashboard');
+  const [activeModule, setActiveModule] = useState(() => firstModule(systemId));
   const [menuOpen, setMenuOpen] = useState(false);
   const current = findModule(systemId, activeModule);
   const ModuleIcon = current?.icon;
@@ -89,7 +89,7 @@ export default function SystemPanel({ systemId, user, onExit, onLogout, onSwitch
         </header>
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          {activeModule === 'clientes' ? (
+          {activeModule === 'clientes-y-proveedores.clientes' ? (
             <SysDataTable
               columns={clientesColumns}
               rows={demoClientes}

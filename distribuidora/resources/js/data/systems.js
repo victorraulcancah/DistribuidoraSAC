@@ -71,7 +71,7 @@ export const systems = [
     color: '#475569',
     icon: Settings,
     full: 'Configuración del sistema',
-    description: 'Usuarios, accesos y ajustes generales de la suite.',
+    description: 'Usuarios, accesos y parámetros de todos los sistemas.',
   },
 ];
 
