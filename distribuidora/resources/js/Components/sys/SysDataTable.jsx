@@ -91,6 +91,9 @@ export default function SysDataTable({
   const [panel, setPanel] = useState(null); // 'columns' | 'filters' | null
   const [dragging, setDragging] = useState(null);
   const [dragOver, setDragOver] = useState(null);
+  // anchos fijados por el usuario al arrastrar el borde de una cabecera
+  const [widths, setWidths] = useState({});
+  const [resizingKey, setResizingKey] = useState(null);
 
   const byKey = useMemo(() => Object.fromEntries(columns.map((c) => [c.key, c])), [columns]);
 
@@ -122,6 +125,39 @@ export default function SysDataTable({
     setDragging(null);
     setDragOver(null);
   };
+
+  const startResize = (e, key) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const th = e.currentTarget.closest('th');
+    const startX = e.clientX;
+    const startWidth = th.getBoundingClientRect().width;
+    setResizingKey(key);
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'col-resize';
+
+    const onMove = (ev) =>
+      setWidths((prev) => ({ ...prev, [key]: Math.max(90, startWidth + ev.clientX - startX) }));
+
+    const onUp = () => {
+      setResizingKey(null);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
+
+  /** Doble clic en el borde: la columna vuelve a su ancho automático. */
+  const resetWidth = (key) =>
+    setWidths((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
 
   const data = useMemo(() => {
     let result = rows;
@@ -282,7 +318,8 @@ export default function SysDataTable({
                   <th
                     key={col.key}
                     scope="col"
-                    draggable
+                    style={widths[col.key] ? { width: widths[col.key] } : undefined}
+                    draggable={resizingKey === null}
                     onDragStart={() => setDragging(col.key)}
                     onDragEnd={() => {
                       setDragging(null);
@@ -294,7 +331,11 @@ export default function SysDataTable({
                     }}
                     onDrop={() => handleDrop(col.key)}
                     className={cn(
-                      'group relative whitespace-nowrap px-3 py-2 transition-all duration-200',
+                      'group relative whitespace-nowrap px-3 py-2',
+                      // sin transición mientras se arrastra el borde: debe seguir al cursor
+                      resizingKey === col.key
+                        ? 'select-none'
+                        : 'transition-[width,background-color,opacity] duration-200',
                       isDragged && 'opacity-40',
                       isTarget && 'bg-[rgb(var(--sys-on-rgb)/0.15)]'
                     )}
@@ -311,7 +352,7 @@ export default function SysDataTable({
                     >
                       <GripVertical
                         size={13}
-                        className="cursor-grab text-[var(--sys-on)] opacity-0 transition-opacity group-hover:opacity-60 active:cursor-grabbing"
+                        className="cursor-grab text-[var(--sys-on)] opacity-40 transition-opacity hover:opacity-100 active:cursor-grabbing"
                         aria-hidden="true"
                       />
 
@@ -325,10 +366,8 @@ export default function SysDataTable({
                           onClick={() => toggleSort(col.key)}
                           aria-label={`Ordenar por ${col.label}`}
                           className={cn(
-                            'rounded p-0.5 transition-all',
-                            isSorted
-                              ? 'text-[var(--sys-on)]'
-                              : 'text-[var(--sys-on)] opacity-0 group-hover:opacity-60 hover:!opacity-100'
+                            'rounded p-0.5 text-[var(--sys-on)] transition-opacity hover:opacity-100',
+                            isSorted ? 'opacity-100' : 'opacity-50'
                           )}
                         >
                           {isSorted && sort.dir === 'asc' ? (
@@ -347,16 +386,31 @@ export default function SysDataTable({
                           onClick={() => setOpenSearch((k) => (k === col.key ? null : col.key))}
                           aria-label={`Buscar en ${col.label}`}
                           className={cn(
-                            'rounded p-0.5 transition-all',
-                            columnSearch[col.key]?.trim()
-                              ? 'text-[var(--sys-on)]'
-                              : 'text-[var(--sys-on)] opacity-0 group-hover:opacity-60 hover:!opacity-100'
+                            'rounded p-0.5 text-[var(--sys-on)] transition-opacity hover:opacity-100',
+                            columnSearch[col.key]?.trim() ? 'opacity-100' : 'opacity-50'
                           )}
                         >
                           <Search size={13} />
                         </button>
                       )}
                     </div>
+
+                    {/* tirador para agrandar o reducir la columna */}
+                    <span
+                      role="separator"
+                      aria-orientation="vertical"
+                      aria-label={`Redimensionar ${col.label}`}
+                      onMouseDown={(e) => startResize(e, col.key)}
+                      onDoubleClick={() => resetWidth(col.key)}
+                      onDragStart={(e) => e.preventDefault()}
+                      className={cn(
+                        'absolute right-0 top-0 z-10 flex h-full w-2 cursor-col-resize items-center justify-center',
+                        'after:h-1/2 after:w-0.5 after:rounded-full after:bg-[var(--sys-on)] after:transition-opacity',
+                        resizingKey === col.key
+                          ? 'after:opacity-100'
+                          : 'after:opacity-0 hover:after:opacity-60'
+                      )}
+                    />
 
                     {/* ventana flotante: no empuja la cabecera */}
                     {openSearch === col.key && (
