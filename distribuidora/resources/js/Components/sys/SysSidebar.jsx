@@ -95,13 +95,14 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
                   title={group.group}
                   aria-label={group.group}
                   aria-expanded={flyout?.group === group.group}
-                  onClick={(e) =>
+                  onClick={(e) => {
+                    // Hay que medir antes de setState: React limpia el evento
+                    // sintético y dentro del updater `currentTarget` ya es null.
+                    const { top } = e.currentTarget.getBoundingClientRect();
                     setFlyout((prev) =>
-                      prev?.group === group.group
-                        ? null
-                        : { group: group.group, top: e.currentTarget.getBoundingClientRect().top }
-                    )
-                  }
+                      prev?.group === group.group ? null : { group: group.group, top }
+                    );
+                  }}
                   className={cn(
                     'mb-1 flex w-full items-center justify-center rounded-lg p-2 transition-colors',
                     hasActive || flyout?.group === group.group
