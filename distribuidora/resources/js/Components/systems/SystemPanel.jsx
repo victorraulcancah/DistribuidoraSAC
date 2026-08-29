@@ -1,37 +1,94 @@
-import { Home } from 'lucide-react';
+import { useState } from 'react';
 import { getSystem } from '@/data/systems';
+import { findModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
+import UserMenu from './UserMenu';
+import NotificationsMenu from './NotificationsMenu';
+import SysSidebar from '@/Components/sys/SysSidebar';
 import SysBadge from '@/Components/sys/SysBadge';
-import SysButton from '@/Components/sys/SysButton';
-import { SysIconTile } from '@/Components/sys/SysSurface';
+import SysDataTable from '@/Components/sys/SysDataTable';
+import { SysEmptyState } from '@/Components/sys/SysFeedback';
+import { demoClientes } from '@/data/demoRows';
 
-export default function SystemPanel({ systemId, onExit }) {
-  const sys = getSystem(systemId);
-  const Icon = sys?.icon;
+// Columnas de muestra para el listado de clientes de ERP.
+const clientesColumns = [
+  { key: 'codigo', label: 'Código' },
+  { key: 'nombre', label: 'Cliente' },
+  { key: 'ruc', label: 'RUC' },
+  { key: 'distrito', label: 'Distrito' },
+  { key: 'vendedor', label: 'Vendedor' },
+  {
+    key: 'deuda',
+    label: 'Deuda',
+    align: 'right',
+    render: (row) => `S/ ${row.deuda.toFixed(2)}`,
+  },
+  {
+    key: 'estado',
+    label: 'Estado',
+    render: (row) => (
+      <span
+        className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
+          row.estado === 'Activo'
+            ? 'bg-emerald-50 text-emerald-700'
+            : row.estado === 'Moroso'
+              ? 'bg-amber-50 text-amber-700'
+              : 'bg-red-50 text-red-700'
+        }`}
+      >
+        {row.estado}
+      </span>
+    ),
+  },
+];
+
+export default function SystemPanel({ systemId, user, onExit, onLogout }) {
+  const system = getSystem(systemId);
+  const [activeModule, setActiveModule] = useState('dashboard');
+  const current = findModule(systemId, activeModule);
+  const ModuleIcon = current?.icon;
 
   return (
     <SystemThemeProvider
-      system={sys}
-      className="flex min-h-dvh w-full flex-col items-center justify-center bg-white p-8 font-sans antialiased"
+      system={system}
+      className="flex min-h-dvh w-full bg-zinc-50/60 font-sans antialiased"
     >
-      <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
-        <SysIconTile className="mb-5 h-16 w-16 rounded-2xl">
-          {Icon && <Icon size={30} />}
-        </SysIconTile>
+      <SysSidebar activeModule={activeModule} onSelect={setActiveModule} onExit={onExit} />
 
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">{sys?.id}</h1>
-        <p className="mt-1.5 text-sm text-zinc-500">{sys?.full}</p>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex items-center justify-between gap-4 border-b border-zinc-200 bg-white px-6 py-3">
+          <div className="flex min-w-0 items-center gap-2.5">
+            {ModuleIcon && (
+              <ModuleIcon size={18} className="shrink-0 text-[rgb(var(--sys-rgb))]" />
+            )}
+            <h1 className="truncate text-sm font-semibold text-zinc-900">{current?.label}</h1>
+            <SysBadge>{system?.id}</SysBadge>
+          </div>
 
-        <SysBadge className="mt-4">{sys?.modules} módulos</SysBadge>
+          <div className="flex shrink-0 items-center gap-2.5">
+            <UserMenu user={user} onLogout={onLogout} />
+            <NotificationsMenu />
+          </div>
+        </header>
 
-        <p className="mt-6 max-w-md text-sm leading-relaxed text-zinc-500">
-          Este sistema está en construcción. Pronto encontrarás aquí sus módulos operativos.
-        </p>
-
-        <SysButton variant="solid" size="lg" onClick={onExit} className="mt-8">
-          <Home size={16} />
-          Inicio
-        </SysButton>
+        <main className="flex-1 overflow-y-auto p-6">
+          {activeModule === 'clientes' ? (
+            <SysDataTable
+              columns={clientesColumns}
+              rows={demoClientes}
+              searchPlaceholder="Buscar cliente, RUC, distrito..."
+              empty="Ningún cliente coincide con la búsqueda."
+            />
+          ) : (
+            <div className="rounded-xl border border-zinc-200 bg-white">
+              <SysEmptyState
+                icon={ModuleIcon}
+                title={`${current?.label} en construcción`}
+                description={`Este módulo de ${system?.full} todavía no tiene contenido. Los componentes ya heredan el color del sistema, así que al construirlo saldrá con la identidad de ${system?.id}.`}
+              />
+            </div>
+          )}
+        </main>
       </div>
     </SystemThemeProvider>
   );

@@ -1,5 +1,6 @@
 import { Boxes, ArrowRight } from 'lucide-react';
 import { systems } from '@/data/systems';
+import { countModules } from '@/data/modules';
 import UserMenu from './UserMenu';
 import NotificationsMenu from './NotificationsMenu';
 import SystemThemeProvider from './SystemThemeProvider';
@@ -67,7 +68,7 @@ function SystemCard({ sys, onEnter }) {
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <SysBadge tone="onColor">{sys.modules} módulos</SysBadge>
+          <SysBadge tone="onColor">{countModules(sys.id)} módulos</SysBadge>
           <span className="flex shrink-0 items-center gap-1 text-xs font-medium opacity-70 transition-opacity group-hover:opacity-100">
             Entrar
             <ArrowRight size={13} className="transition-transform group-hover:translate-x-0.5" />
