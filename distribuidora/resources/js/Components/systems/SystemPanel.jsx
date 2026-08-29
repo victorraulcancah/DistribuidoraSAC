@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Menu, Pencil, Trash2, UserRound } from 'lucide-react';
 import { getSystem } from '@/data/systems';
 import { findModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
@@ -94,6 +94,25 @@ export default function SystemPanel({ systemId, user, onExit, onLogout }) {
               rows={demoClientes}
               searchPlaceholder="Buscar cliente, RUC, distrito..."
               empty="Ningún cliente coincide con la búsqueda."
+              cardIcon={UserRound}
+              actions={() => (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Editar"
+                    className="rounded-md p-1 text-[rgb(var(--sys-rgb))] transition-colors hover:bg-[rgb(var(--sys-rgb)/0.12)]"
+                  >
+                    <Pencil size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Eliminar"
+                    className="rounded-md p-1 text-red-500 transition-colors hover:bg-red-50"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </>
+              )}
             />
           ) : (
             <div className="rounded-xl border border-zinc-200 bg-white">

@@ -76,6 +76,9 @@ export default function SysDataTable({
   rowKey = 'id',
   searchPlaceholder = 'Buscar...',
   empty = 'No hay registros para mostrar.',
+  // solo para la vista móvil: icono junto al título y acciones de cada tarjeta
+  cardIcon: CardIcon,
+  actions,
   className,
 }) {
   const [order, setOrder] = useState(() => columns.map((c) => c.key));
@@ -161,8 +164,8 @@ export default function SysDataTable({
   return (
     <div className={className}>
       {/* barra de herramientas: suelta, sin tarjeta que la envuelva */}
-      <div className="mb-2 flex flex-wrap items-center justify-end gap-2">
-        <div className="relative w-full max-w-xs">
+      <div className="mb-2 flex items-center justify-end gap-2">
+        <div className="relative min-w-0 flex-1 sm:max-w-xs sm:flex-none sm:basis-80">
           <Search
             size={15}
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
@@ -184,29 +187,6 @@ export default function SysDataTable({
             </button>
           )}
         </div>
-
-        {/* en móvil no hay cabeceras: el orden se elige aquí */}
-        <select
-          aria-label="Ordenar por"
-          value={sort.key ? `${sort.key}:${sort.dir}` : ''}
-          onChange={(e) => {
-            const [key, dir] = e.target.value.split(':');
-            setSort(key ? { key, dir } : { key: null, dir: null });
-          }}
-          className="w-full rounded-lg border border-zinc-200 bg-white px-2 py-2 text-[13px] text-zinc-600 outline-none focus:border-[rgb(var(--sys-rgb)/0.6)] focus:ring-2 focus:ring-[rgb(var(--sys-rgb)/0.15)] sm:hidden"
-        >
-          <option value="">Sin ordenar</option>
-          {columns
-            .filter((c) => c.sortable !== false)
-            .flatMap((c) => [
-              <option key={`${c.key}:asc`} value={`${c.key}:asc`}>
-                {c.label} ascendente
-              </option>,
-              <option key={`${c.key}:desc`} value={`${c.key}:desc`}>
-                {c.label} descendente
-              </option>,
-            ])}
-        </select>
 
         {/* iconos junto al buscador, en el extremo derecho */}
         <div className="flex items-center gap-1">
@@ -430,7 +410,7 @@ export default function SysDataTable({
       {/* móvil: cada fila se convierte en una tarjeta */}
       <div className="space-y-2 sm:hidden">
         {data.length === 0 ? (
-          <p className="rounded-lg bg-white px-4 py-10 text-center text-sm text-zinc-500 ring-1 ring-zinc-200">
+          <p className="rounded-xl bg-white px-4 py-10 text-center text-sm text-zinc-500 ring-1 ring-zinc-200">
             {empty}
           </p>
         ) : (
@@ -439,27 +419,39 @@ export default function SysDataTable({
             return (
               <div
                 key={row[rowKey]}
-                className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-zinc-200"
+                className="rounded-xl bg-white p-3 shadow-sm ring-1 ring-zinc-200"
               >
                 {head && (
-                  <div className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] px-3 py-2 text-[var(--sys-on)]">
-                    <p className="text-[10px] uppercase tracking-wider opacity-70">{head.label}</p>
-                    <p className="text-sm font-semibold">
-                      {head.render ? head.render(row) : row[head.key]}
-                    </p>
+                  <div className="mb-2.5 flex items-start justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
+                      {CardIcon && (
+                        <CardIcon
+                          size={16}
+                          className="shrink-0 text-[rgb(var(--sys-rgb))]"
+                          aria-hidden="true"
+                        />
+                      )}
+                      <p className="truncate text-sm font-semibold text-zinc-900">
+                        {head.render ? head.render(row) : row[head.key]}
+                      </p>
+                    </div>
+                    {actions && <div className="flex shrink-0 items-center gap-1">{actions(row)}</div>}
                   </div>
                 )}
-                <dl className="divide-y divide-zinc-100">
-                  {rest.map((col) => (
-                    <div key={col.key} className="flex items-start justify-between gap-3 px-3 py-2">
-                      <dt className="text-[11px] uppercase tracking-wider text-zinc-500">
-                        {col.label}
-                      </dt>
-                      <dd className="text-right text-[13px] text-zinc-800">
-                        {col.render ? col.render(row) : row[col.key]}
-                      </dd>
-                    </div>
-                  ))}
+
+                <dl className="space-y-1.5">
+                  {rest.map((col) => {
+                    const value = col.render ? col.render(row) : row[col.key];
+                    const isEmpty = value === null || value === undefined || value === '';
+                    return (
+                      <div key={col.key} className="flex items-center justify-between gap-3">
+                        <dt className="shrink-0 text-[12px] text-zinc-500">{col.label}</dt>
+                        <dd className="min-w-0 truncate text-right text-[12px] text-zinc-800">
+                          {isEmpty ? <span className="text-zinc-300">—</span> : value}
+                        </dd>
+                      </div>
+                    );
+                  })}
                 </dl>
               </div>
             );
