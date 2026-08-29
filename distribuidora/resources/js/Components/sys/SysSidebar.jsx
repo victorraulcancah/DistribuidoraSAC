@@ -41,11 +41,12 @@ export default function SysSidebar({ activeModule, onSelect, onExit }) {
       {/* módulos */}
       <nav className="flex-1 overflow-y-auto px-2 py-3">
         {groups.map((group) => {
-          // Un grupo plegado sigue mostrando el módulo activo: si no, al plegarlo
-          // desaparecería la pantalla en la que estás.
+          // El grupo que contiene el módulo activo se marca en la cabecera,
+          // pero plegado no muestra ningún elemento.
           const hasActive = group.items.some((i) => i.id === activeModule);
           const isOpen = collapsed || !!opened[group.group];
-          const visible = isOpen ? group.items : group.items.filter((i) => i.id === activeModule);
+          const GroupIcon = group.icon;
+          const visible = isOpen ? group.items : [];
 
           return (
             <div key={group.group} className="mb-3 last:mb-0">
@@ -56,10 +57,28 @@ export default function SysSidebar({ activeModule, onSelect, onExit }) {
                   aria-expanded={isOpen}
                   className="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400 transition-colors hover:text-zinc-600"
                 >
-                  <span className="truncate">{group.group}</span>
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    {GroupIcon && (
+                      <GroupIcon
+                        size={13}
+                        className={cn(
+                          'shrink-0 transition-colors',
+                          isOpen || hasActive ? 'text-[rgb(var(--sys-rgb))]' : 'text-zinc-400'
+                        )}
+                      />
+                    )}
+                    <span className="truncate">{group.group}</span>
+                  </span>
                   <span className="flex items-center gap-1">
-                    {!isOpen && !hasActive && (
-                      <span className="rounded bg-zinc-100 px-1 text-[9px] font-semibold tabular-nums text-zinc-500">
+                    {!isOpen && (
+                      <span
+                        className={cn(
+                          'rounded px-1 text-[9px] font-semibold tabular-nums',
+                          hasActive
+                            ? 'bg-[rgb(var(--sys-rgb)/0.15)] text-[rgb(var(--sys-ink-rgb))]'
+                            : 'bg-zinc-100 text-zinc-500'
+                        )}
+                      >
                         {group.items.length}
                       </span>
                     )}

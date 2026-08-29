@@ -1,4 +1,9 @@
 import {
+  Gauge,
+  Database,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  CheckCheck,
   LayoutDashboard,
   Users,
   Truck,
@@ -65,10 +70,12 @@ export const modulesBySystem = {
   ERP: [
     {
       group: 'General',
+      icon: Gauge,
       items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }],
     },
     {
       group: 'Maestros',
+      icon: Database,
       items: [
         { id: 'clientes', label: 'Clientes', icon: Users },
         { id: 'proveedores', label: 'Proveedores', icon: Truck },
@@ -79,6 +86,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Comercial',
+      icon: ShoppingCart,
       items: [
         { id: 'compras', label: 'Compras', icon: ShoppingCart },
         { id: 'ordenes-compra', label: 'Órdenes de compra', icon: ClipboardList },
@@ -90,6 +98,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Finanzas',
+      icon: Landmark,
       items: [
         { id: 'cxc', label: 'Cuentas por cobrar', icon: ArrowDownCircle },
         { id: 'cxp', label: 'Cuentas por pagar', icon: ArrowUpCircle },
@@ -103,10 +112,12 @@ export const modulesBySystem = {
   WMS: [
     {
       group: 'General',
+      icon: Gauge,
       items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }],
     },
     {
       group: 'Entradas',
+      icon: ArrowDownToLine,
       items: [
         { id: 'recepcion', label: 'Recepción', icon: PackageOpen },
         { id: 'ubicaciones', label: 'Ubicaciones', icon: MapPin },
@@ -116,6 +127,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Salidas',
+      icon: ArrowUpFromLine,
       items: [
         { id: 'picking', label: 'Picking', icon: Hand },
         { id: 'packing', label: 'Packing', icon: PackageCheck },
@@ -125,6 +137,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Control',
+      icon: ClipboardCheck,
       items: [
         { id: 'inventario', label: 'Inventario cíclico', icon: ClipboardCheck },
         { id: 'ajustes', label: 'Ajustes', icon: Settings2 },
@@ -137,10 +150,12 @@ export const modulesBySystem = {
   TMS: [
     {
       group: 'General',
+      icon: Gauge,
       items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }],
     },
     {
       group: 'Recursos',
+      icon: Car,
       items: [
         { id: 'flota', label: 'Flota', icon: Car },
         { id: 'conductores', label: 'Conductores', icon: IdCard },
@@ -149,6 +164,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Operación',
+      icon: Route,
       items: [
         { id: 'planificacion', label: 'Planificación', icon: CalendarRange },
         { id: 'despachos', label: 'Despachos', icon: Send },
@@ -158,6 +174,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Costos',
+      icon: Coins,
       items: [
         { id: 'combustible', label: 'Combustible', icon: Fuel },
         { id: 'mantenimiento', label: 'Mantenimiento', icon: Wrench },
@@ -170,10 +187,12 @@ export const modulesBySystem = {
   DMS: [
     {
       group: 'General',
+      icon: Gauge,
       items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }],
     },
     {
       group: 'Reparto',
+      icon: Truck,
       items: [
         { id: 'hoja-ruta', label: 'Hoja de ruta', icon: ListChecks },
         { id: 'entregas', label: 'Entregas', icon: PackageCheck },
@@ -184,6 +203,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Cierre',
+      icon: CheckCheck,
       items: [
         { id: 'liquidacion', label: 'Liquidación', icon: Coins },
         { id: 'reportes', label: 'Reportes', icon: BarChart3 },
@@ -194,10 +214,12 @@ export const modulesBySystem = {
   RRHH: [
     {
       group: 'General',
+      icon: Gauge,
       items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }],
     },
     {
       group: 'Personal',
+      icon: Users,
       items: [
         { id: 'empleados', label: 'Empleados', icon: UserRound },
         { id: 'contratos', label: 'Contratos', icon: FileSignature },
@@ -206,6 +228,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Tiempo',
+      icon: Clock,
       items: [
         { id: 'asistencia', label: 'Asistencia', icon: Fingerprint },
         { id: 'marcaciones', label: 'Marcaciones', icon: Clock },
@@ -218,6 +241,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Remuneraciones',
+      icon: Wallet,
       items: [
         { id: 'nomina', label: 'Nómina', icon: Wallet },
         { id: 'boletas', label: 'Boletas', icon: FileBadge },
@@ -228,6 +252,7 @@ export const modulesBySystem = {
     },
     {
       group: 'Desarrollo',
+      icon: GraduationCap,
       items: [
         { id: 'evaluacion', label: 'Evaluación', icon: Star },
         { id: 'capacitacion', label: 'Capacitación', icon: GraduationCap },
