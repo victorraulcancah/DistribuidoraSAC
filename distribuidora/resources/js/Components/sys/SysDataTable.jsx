@@ -408,7 +408,7 @@ export default function SysDataTable({
                         'after:h-1/2 after:w-0.5 after:rounded-full after:bg-[var(--sys-on)] after:transition-opacity',
                         resizingKey === col.key
                           ? 'after:opacity-100'
-                          : 'after:opacity-0 hover:after:opacity-60'
+                          : 'after:opacity-40 hover:after:opacity-100'
                       )}
                     />
 
