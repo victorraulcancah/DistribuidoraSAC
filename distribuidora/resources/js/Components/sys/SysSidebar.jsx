@@ -11,12 +11,12 @@ import { getModules } from '@/data/modules';
 export default function SysSidebar({ activeModule, onSelect, onExit }) {
   const system = useSystem();
   const [collapsed, setCollapsed] = useState(false);
-  // Grupos plegados. Arrancan todos desplegados; se guarda lo cerrado.
-  const [closed, setClosed] = useState({});
+  // Arrancan todos plegados; se guarda solo lo que el usuario abre.
+  const [opened, setOpened] = useState({});
   const groups = getModules(system?.id);
   const Icon = system?.icon;
 
-  const toggleGroup = (name) => setClosed((prev) => ({ ...prev, [name]: !prev[name] }));
+  const toggleGroup = (name) => setOpened((prev) => ({ ...prev, [name]: !prev[name] }));
 
   return (
     <aside
@@ -44,7 +44,7 @@ export default function SysSidebar({ activeModule, onSelect, onExit }) {
           // Un grupo plegado sigue mostrando el módulo activo: si no, al plegarlo
           // desaparecería la pantalla en la que estás.
           const hasActive = group.items.some((i) => i.id === activeModule);
-          const isOpen = collapsed || !closed[group.group];
+          const isOpen = collapsed || !!opened[group.group];
           const visible = isOpen ? group.items : group.items.filter((i) => i.id === activeModule);
 
           return (
