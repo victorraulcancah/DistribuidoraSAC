@@ -722,81 +722,553 @@ El sistema de RRHH gestiona el ciclo de vida del trabajador, desde el reclutamie
 
 ## Sidebar sugerido por sistema
 
-Esta estructura sirve como base para organizar el menu lateral de la plataforma. El sidebar debe mostrar primero los modulos operativos y dejar los catalogos, reglas y parametros dentro de Configuraciones.
+Esta estructura sirve como base para organizar el menu lateral de la plataforma. El sidebar debe mostrar primero los modulos operativos y dejar los catalogos, reglas, estados, motivos y parametros dentro de Configuraciones.
 
 ### ERP
 
 - Finanzas y Contabilidad
+  - Contabilidad general
+  - Plan contable
+  - Cuentas por cobrar
+  - Cuentas por pagar
+  - Activos fijos
+  - Cierres contables
+  - Estados financieros
 - Ventas
+  - Cotizaciones
+  - Pedidos de venta
+  - Facturacion
+  - Notas de credito
+  - Notas de debito
+  - Devoluciones de venta
+  - Listas de precios
+  - Descuentos
+  - Comisiones
 - Compras
+  - Solicitudes de compra
+  - Cotizaciones de proveedores
+  - Ordenes de compra
+  - Recepcion de compras
+  - Facturas de proveedores
+  - Devoluciones a proveedores
+  - Evaluacion de proveedores
 - Inventario administrativo
+  - Productos
+  - Stock valorizado
+  - Transferencias
+  - Ajustes de inventario
+  - Kardex
+  - Lotes
+  - Series
 - Tesoreria
+  - Caja
+  - Movimientos bancarios
+  - Ingresos
+  - Egresos
+  - Transferencias bancarias
+  - Pagos
+  - Cobranzas
+  - Conciliacion bancaria
+  - Flujo de caja
 - Clientes y Proveedores
+  - Clientes
+  - Proveedores
+  - Contactos
+  - Direcciones
+  - Condiciones comerciales
+  - Limites de credito
+  - Historial comercial
 - Presupuestos y Costos
+  - Presupuestos
+  - Centros de costo
+  - Costos operativos
+  - Costos por area
+  - Costos por proyecto
+  - Control presupuestario
 - Reportes y BI
+  - Dashboard ejecutivo
+  - Reportes de ventas
+  - Reportes de compras
+  - Reportes financieros
+  - Rentabilidad
+  - Flujo de caja
+  - KPIs
 - Configuraciones
+  - Usuarios
+  - Roles
+  - Permisos
+  - Flujos de aprobacion
+  - Auditoria
+  - Bitacora de cambios
+  - Parametros generales
+  - Empresas y sucursales
+  - Series y correlativos
+  - Impuestos
+  - Monedas y tipo de cambio
+  - Plantillas y formatos
+  - Bancos y cuentas bancarias
+  - Categorias de productos
+  - Unidades de medida
+  - Estados de documentos
+  - Motivos de anulacion
+  - Motivos de devolucion
+  - Condiciones de pago
+  - Metodos de pago
 
 ### WMS
 
 - Almacenes y ubicaciones
+  - Mapa de almacenes
+  - Mapa de ubicaciones
+  - Ocupacion por zona
+  - Capacidad por ubicacion
+  - Disponibilidad de ubicaciones
 - Maestros logisticos
+  - SKU
+  - Productos
+  - Codigos de barras
+  - Lotes
+  - Series
+  - Dimensiones
+  - Peso
 - Recepcion
+  - Ordenes de recepcion
+  - ASN
+  - Recepcion de compras
+  - Recepcion de transferencias
+  - Recepcion de devoluciones
+  - Conteo
+  - Diferencias
+  - Inspeccion
 - Putaway y almacenamiento
+  - Asignacion de ubicacion
+  - Putaway automatico
+  - Putaway manual
+  - Reubicacion
+  - Consolidacion
 - Inventario operativo
+  - Stock por almacen
+  - Stock por ubicacion
+  - Stock disponible
+  - Stock reservado
+  - Stock bloqueado
+  - Stock en transito
+  - Kardex operativo
+  - Stock por lote
+  - Stock por serie
+  - Vencimientos
 - Picking
+  - Picking por pedido
+  - Picking por ola
+  - Picking por zona
+  - Picking por ruta
+  - Picking por lote
+  - Picking parcial
+  - Reposicion
 - Packing
+  - Empaque
+  - Cajas
+  - Bultos
+  - Etiquetas
+  - Pesaje
+  - Dimensiones
+  - Consolidacion
 - Despacho
+  - Pedidos preparados
+  - Verificacion
+  - Consolidacion de carga
+  - Control de salida
+  - Entrega al transportista
 - Movimientos internos
+  - Transferencias
+  - Reubicaciones
+  - Ajustes
+  - Consumos
+  - Devoluciones
 - Inventario fisico
+  - Inventario general
+  - Conteo ciclico
+  - Conteo por ubicacion
+  - Reconteo
+  - Ajustes por diferencias
 - Calidad
+  - Inspecciones
+  - Cuarentena
+  - Productos danados
+  - Productos rechazados
+  - Liberacion
+  - No conformidades
 - Equipos y dispositivos
+  - Handheld
+  - RF
+  - Codigo de barras
+  - RFID
+  - Impresoras
+  - Balanzas
 - Reportes y KPIs
+  - Exactitud de inventario
+  - Productividad de picking
+  - Tiempo de recepcion
+  - Tiempo de despacho
+  - Ocupacion
+  - Errores de picking
+  - Merma
 - Configuraciones
+  - Usuarios
+  - Roles
+  - Permisos
+  - Flujos de aprobacion
+  - Auditoria
+  - Bitacora de cambios
+  - Parametros operativos de almacen
+  - Almacenes
+  - Areas
+  - Zonas
+  - Pasillos
+  - Racks
+  - Niveles
+  - Ubicaciones
+  - Muelles
+  - Categorias logisticas
+  - Unidades logisticas
+  - Reglas de ubicacion
+  - Motivos de ajuste
+  - Estados de recepcion
+  - Estados de despacho
 
 ### TMS
 
 - Ordenes de transporte
+  - Solicitudes de transporte
+  - Ordenes de transporte
+  - Pedidos a transportar
+  - Consolidacion
+  - Prioridades
+  - Ventanas horarias
 - Planificacion
+  - Planificacion de viajes
+  - Asignacion de vehiculos
+  - Asignacion de conductores
+  - Consolidacion de cargas
+  - Capacidad
+  - Secuencia de entregas
 - Ruteo
+  - Creacion de rutas
+  - Optimizacion de rutas
+  - Paradas
+  - Distancias
+  - Ventanas horarias
 - Flota
+  - Vehiculos
+  - Capacidad
+  - Kilometraje
+  - Combustible
+  - Documentacion
+  - Disponibilidad
 - Conductores
+  - Conductores
+  - Licencias
+  - Documentos
+  - Asignaciones
+  - Historial de viajes
+  - Historial de incidencias del conductor
 - Tracking
+  - GPS
+  - Ubicacion
+  - Seguimiento en tiempo real
+  - ETA
+  - Geocercas
+  - Paradas
+  - Historial de recorrido
 - Entregas y POD
+  - Entregas
+  - Confirmacion de entrega
+  - Firma digital
+  - Foto
+  - Fecha y hora
+  - Receptor
+  - Entrega parcial
+  - Rechazos
 - Incidencias
+  - Retrasos
+  - Averias
+  - Accidentes
+  - Cliente ausente
+  - Direccion incorrecta
+  - Producto danado
+  - Devoluciones
 - Transportistas
+  - Transportistas
+  - Proveedores de transporte
+  - Tarifarios
+  - Contratos
+  - Servicios
+  - Evaluacion
 - Costos de transporte
+  - Costo por viaje
+  - Costo por kilometro
+  - Costo por entrega
+  - Combustible
+  - Peajes
+  - Viaticos
+  - Fletes
+  - Liquidacion
 - Reportes y KPIs
+  - Entregas a tiempo
+  - Costo por kilometro
+  - Costo por entrega
+  - Utilizacion de flota
+  - Productividad
+  - Kilometros recorridos
+  - Rentabilidad por ruta
 - Configuraciones
+  - Usuarios
+  - Roles
+  - Permisos
+  - Flujos de aprobacion
+  - Auditoria
+  - Bitacora de cambios
+  - Parametros de transporte
+  - Tipos de vehiculo
+  - Tipos de servicio
+  - Zonas de reparto
+  - Tarifarios base
+  - Motivos de incidencia
+  - Estados de transporte
+  - Estados de entrega
 
 ### DMS
 
 - Gestion documental
+  - Documentos
+  - Carpetas
+  - Metadatos
 - Archivo
+  - Carga de documentos
+  - Digitalizacion
+  - Clasificacion
+  - Indexacion
+  - Versiones
+  - Historial
 - Busqueda
+  - Busqueda por nombre
+  - Busqueda por contenido
+  - Filtros
+  - Metadatos
+  - Etiquetas
+  - OCR
 - Versionamiento
+  - Versiones
+  - Control de cambios
+  - Comparacion
+  - Restauracion
+  - Historial
 - Flujos de trabajo
+  - Creacion de flujo
+  - Aprobaciones
+  - Revisiones
+  - Rechazos
+  - Delegaciones
+  - Notificaciones
 - Firma electronica
+  - Firma de documentos
+  - Solicitud de firma
+  - Firmantes
+  - Orden de firma
+  - Estado de firma
+  - Evidencias
 - Seguridad documental
+  - Acceso por carpeta
+  - Acceso por documento
+  - Restricciones
+  - Clasificacion de confidencialidad
+  - Auditoria documental
 - Retencion y archivo historico
+  - Vencimientos
+  - Archivo historico
+  - Eliminacion
+  - Recuperacion
 - Integraciones
+  - ERP
+  - WMS
+  - TMS
+  - RRHH
+  - API
+  - Correo electronico
+  - Almacenamiento externo
 - Reportes
+  - Documentos creados
+  - Documentos modificados
+  - Documentos vencidos
+  - Firmas pendientes
+  - Aprobaciones pendientes
+  - Reporte de auditoria
 - Configuraciones
+  - Usuarios
+  - Roles
+  - Permisos
+  - Flujos de aprobacion
+  - Auditoria
+  - Bitacora de cambios
+  - Parametros documentales
+  - Categorias documentales
+  - Tipos de documento
+  - Etiquetas
+  - Metadatos
+  - Politicas de retencion
+  - Niveles de confidencialidad
+  - Estados de aprobacion
 
 ### RRHH
 
 - Empleados
+  - Ficha del empleado
+  - Datos personales
+  - Datos laborales
+  - Contactos
+  - Datos bancarios
+  - Datos familiares
+  - Documentos
+  - Historial laboral
+  - Historial salarial
 - Organizacion
+  - Organigrama
+  - Jerarquias
+  - Asignacion organizacional
+  - Estructura de equipos
 - Reclutamiento
+  - Requisiciones
+  - Vacantes
+  - Postulantes
+  - CV
+  - Entrevistas
+  - Evaluaciones
+  - Pruebas
+  - Seleccion
+  - Contratacion
 - Onboarding
+  - Checklist de ingreso
+  - Documentacion
+  - Contratos
+  - Induccion
+  - Capacitacion inicial
+  - Asignacion de puesto
+  - Asignacion de equipos
 - Asistencia
+  - Marcaciones
+  - Entrada y salida
+  - Turnos
+  - Horarios
+  - Jornadas
+  - Tardanzas
+  - Inasistencias
+  - Horas extras
+  - Justificaciones
 - Vacaciones y permisos
+  - Solicitudes
+  - Aprobaciones
+  - Calendario
+  - Saldos
+  - Vacaciones
+  - Permisos
+  - Licencias
+  - Ausencias
 - Nomina
+  - Sueldos
+  - Conceptos salariales
+  - Bonificaciones
+  - Comisiones
+  - Horas extras
+  - Descuentos
+  - Retenciones
+  - Adelantos
+  - Prestamos
+  - Boletas
+  - Liquidaciones
 - Desempeno
+  - Evaluaciones
+  - Objetivos
+  - KPIs
+  - Competencias
+  - Evaluacion 360 grados
+  - Calificaciones
+  - Planes de mejora
 - Capacitacion
+  - Cursos
+  - Planes de capacitacion
+  - Inscripciones
+  - Asistencia
+  - Evaluaciones
+  - Certificaciones
+  - Historial
 - Beneficios
+  - Seguros
+  - Alimentacion
+  - Transporte
+  - Bonos
+  - Beneficios corporativos
+  - Asignaciones
 - Activos del empleado
+  - Equipos
+  - Computadoras
+  - Celulares
+  - Uniformes
+  - Herramientas
+  - Vehiculos
+  - Asignaciones
+  - Devoluciones
 - Desvinculacion
+  - Renuncia
+  - Terminacion
+  - Despido
+  - Checklist de salida
+  - Devolucion de activos
+  - Liquidacion
+  - Entrevista de salida
 - Portal del empleado
+  - Mi perfil
+  - Mis documentos
+  - Mis boletas
+  - Mis asistencias
+  - Mis vacaciones
+  - Mis permisos
+  - Mis solicitudes
+  - Mis beneficios
 - Portal del jefe
+  - Equipo
+  - Aprobaciones
+  - Vacaciones
+  - Permisos
+  - Horas extras
+  - Asistencia
+  - Evaluaciones
 - Reportes y KPIs
+  - Headcount
+  - Rotacion
+  - Ausentismo
+  - Horas extras
+  - Costos laborales
+  - Vacaciones
+  - Nomina
+  - Desempeno
+  - Reclutamiento
 - Configuraciones
+  - Usuarios
+  - Roles
+  - Permisos
+  - Flujos de aprobacion
+  - Auditoria
+  - Bitacora de cambios
+  - Parametros de RRHH
+  - Empresas
+  - Sucursales
+  - Areas
+  - Departamentos
+  - Puestos
+  - Cargos
+  - Centros de costo
+  - Tipos de contrato
+  - Tipos de permiso
+  - Tipos de licencia
+  - Conceptos de nomina
+  - Estados del empleado
