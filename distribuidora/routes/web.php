@@ -5,10 +5,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
@@ -24,3 +20,12 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+/*
+ * La suite es una SPA: cualquier ruta que no sea de la API devuelve la misma
+ * vista y React decide qué mostrar según el pathname. Va al final para que no
+ * tape ninguna de las rutas declaradas arriba.
+ */
+Route::get('/{path?}', function () {
+    return view('auth.login');
+})->where('path', '^(?!api|build|storage).*$')->name('app');

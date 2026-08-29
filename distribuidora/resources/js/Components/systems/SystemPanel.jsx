@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Menu, Pencil, Trash2, UserRound } from 'lucide-react';
 import { getSystem } from '@/data/systems';
-import { findModule, firstModule } from '@/data/modules';
+import { findModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
 import UserMenu from './UserMenu';
 import NotificationsMenu from './NotificationsMenu';
@@ -44,9 +44,16 @@ const clientesColumns = [
   },
 ];
 
-export default function SystemPanel({ systemId, user, onExit, onLogout, onSwitchSystem }) {
+export default function SystemPanel({
+  systemId,
+  activeModule,
+  onSelectModule,
+  user,
+  onExit,
+  onLogout,
+  onSwitchSystem,
+}) {
   const system = getSystem(systemId);
-  const [activeModule, setActiveModule] = useState(() => firstModule(systemId));
   const [menuOpen, setMenuOpen] = useState(false);
   const current = findModule(systemId, activeModule);
   const ModuleIcon = current?.icon;
@@ -58,7 +65,7 @@ export default function SystemPanel({ systemId, user, onExit, onLogout, onSwitch
     >
       <SysSidebar
         activeModule={activeModule}
-        onSelect={setActiveModule}
+        onSelect={onSelectModule}
         mobileOpen={menuOpen}
         onCloseMobile={() => setMenuOpen(false)}
       />
