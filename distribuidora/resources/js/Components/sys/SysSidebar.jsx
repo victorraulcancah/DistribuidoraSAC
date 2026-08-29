@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSystem } from '@/Components/systems/SystemThemeProvider';
@@ -13,10 +13,30 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
   const [collapsed, setCollapsed] = useState(false);
   // Arrancan todos plegados; se guarda solo lo que el usuario abre.
   const [opened, setOpened] = useState({});
+  // Con la barra contraída, el grupo pulsado se despliega en un panel flotante.
+  const [flyout, setFlyout] = useState(null);
   const groups = getModules(system?.id);
   const Icon = system?.icon;
 
   const toggleGroup = (name) => setOpened((prev) => ({ ...prev, [name]: !prev[name] }));
+
+  useEffect(() => {
+    if (!flyout) return;
+    const close = (e) => {
+      if (!e.target.closest?.('[data-flyout]')) setFlyout(null);
+    };
+    const onKey = (e) => e.key === 'Escape' && setFlyout(null);
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [flyout]);
+
+  useEffect(() => {
+    if (!collapsed) setFlyout(null);
+  }, [collapsed]);
 
   return (
     <>
@@ -71,15 +91,20 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
                 <button
                   key={group.group}
                   type="button"
+                  data-flyout
                   title={group.group}
                   aria-label={group.group}
-                  onClick={() => {
-                    setCollapsed(false);
-                    setOpened((prev) => ({ ...prev, [group.group]: true }));
-                  }}
+                  aria-expanded={flyout?.group === group.group}
+                  onClick={(e) =>
+                    setFlyout((prev) =>
+                      prev?.group === group.group
+                        ? null
+                        : { group: group.group, top: e.currentTarget.getBoundingClientRect().top }
+                    )
+                  }
                   className={cn(
                     'mb-1 flex w-full items-center justify-center rounded-lg p-2 transition-colors',
-                    hasActive
+                    hasActive || flyout?.group === group.group
                       ? 'bg-[rgb(var(--sys-rgb)/0.12)] text-[rgb(var(--sys-rgb))]'
                       : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-700'
                   )}
@@ -175,6 +200,54 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
             );
           })}
         </nav>
+
+        {/* panel flotante: los módulos del grupo pulsado con la barra contraída */}
+        {collapsed && flyout && (
+          <div
+            data-flyout
+            role="menu"
+            style={{ top: Math.min(flyout.top, window.innerHeight - 320) }}
+            className="fixed left-[68px] z-50 ml-1 max-h-[19rem] w-56 overflow-y-auto rounded-xl bg-white py-1 shadow-xl shadow-zinc-900/15 ring-1 ring-zinc-200"
+          >
+            <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
+              {flyout.group}
+            </p>
+            <ul className="px-1 pb-1">
+              {(groups.find((g) => g.group === flyout.group)?.items ?? []).map((item) => {
+                const ItemIcon = item.icon;
+                const isActive = item.id === activeModule;
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        onSelect?.(item.id);
+                        setFlyout(null);
+                        onCloseMobile?.();
+                      }}
+                      className={cn(
+                        'flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left text-[13px] transition-colors',
+                        isActive
+                          ? 'bg-[rgb(var(--sys-rgb)/0.12)] font-medium text-[rgb(var(--sys-ink-rgb))]'
+                          : 'text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+                      )}
+                    >
+                      <ItemIcon
+                        size={16}
+                        className={cn(
+                          'shrink-0',
+                          isActive ? 'text-[rgb(var(--sys-rgb))]' : 'text-zinc-400'
+                        )}
+                      />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
 
         {/* pie */}
         <div className="space-y-0.5 border-t border-zinc-100 p-2">
