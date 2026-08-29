@@ -77,7 +77,7 @@ export default function NotificationsMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-2 w-80 overflow-hidden rounded-xl bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-zinc-200/80"
+          className="absolute right-0 z-20 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-zinc-200/80"
         >
           <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
             <p className="text-[13px] font-semibold text-zinc-900">Notificaciones</p>

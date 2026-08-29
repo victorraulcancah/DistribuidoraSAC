@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Menu } from 'lucide-react';
 import { getSystem } from '@/data/systems';
 import { findModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
@@ -45,6 +46,7 @@ const clientesColumns = [
 export default function SystemPanel({ systemId, user, onExit, onLogout }) {
   const system = getSystem(systemId);
   const [activeModule, setActiveModule] = useState('dashboard');
+  const [menuOpen, setMenuOpen] = useState(false);
   const current = findModule(systemId, activeModule);
   const ModuleIcon = current?.icon;
 
@@ -53,25 +55,39 @@ export default function SystemPanel({ systemId, user, onExit, onLogout }) {
       system={system}
       className="flex min-h-dvh w-full bg-zinc-50/60 font-sans antialiased"
     >
-      <SysSidebar activeModule={activeModule} onSelect={setActiveModule} onExit={onExit} />
+      <SysSidebar
+        activeModule={activeModule}
+        onSelect={setActiveModule}
+        onExit={onExit}
+        mobileOpen={menuOpen}
+        onCloseMobile={() => setMenuOpen(false)}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-4 border-b border-zinc-200 bg-white px-6 py-3">
+        <header className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Abrir menú"
+              className="-ml-1 shrink-0 rounded-lg p-1.5 text-zinc-600 transition-colors hover:bg-zinc-100 lg:hidden"
+            >
+              <Menu size={18} />
+            </button>
             {ModuleIcon && (
               <ModuleIcon size={18} className="shrink-0 text-[rgb(var(--sys-rgb))]" />
             )}
             <h1 className="truncate text-sm font-semibold text-zinc-900">{current?.label}</h1>
-            <SysBadge>{system?.id}</SysBadge>
+            <SysBadge className="hidden sm:inline-flex">{system?.id}</SysBadge>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2.5">
+          <div className="flex shrink-0 items-center gap-2">
             <UserMenu user={user} onLogout={onLogout} />
             <NotificationsMenu />
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
           {activeModule === 'clientes' ? (
             <SysDataTable
               columns={clientesColumns}

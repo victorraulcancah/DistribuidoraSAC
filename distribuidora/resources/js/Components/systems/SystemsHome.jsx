@@ -9,7 +9,7 @@ import { SysSurface, SysIconBox } from '@/Components/sys/SysSurface';
 
 export default function SystemsHome({ user, onEnter, onLogout }) {
   return (
-    <div className="flex min-h-dvh w-full flex-col bg-white p-8 font-sans antialiased">
+    <div className="flex min-h-dvh w-full flex-col bg-white p-4 font-sans antialiased sm:p-8">
       <header className="flex shrink-0 items-center justify-end gap-2.5">
         <UserMenu user={user} onLogout={onLogout} />
         <NotificationsMenu />
@@ -20,7 +20,7 @@ export default function SystemsHome({ user, onEnter, onLogout }) {
           <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-xl shadow-blue-600/25">
             <Boxes size={30} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold uppercase tracking-tight text-zinc-900">
+          <h1 className="text-2xl font-bold uppercase tracking-tight text-zinc-900 sm:text-3xl">
             Distribuidora
           </h1>
           <p className="mt-1.5 text-sm text-zinc-500">Suite operativa para tu negocio</p>

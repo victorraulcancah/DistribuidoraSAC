@@ -185,6 +185,29 @@ export default function SysDataTable({
           )}
         </div>
 
+        {/* en móvil no hay cabeceras: el orden se elige aquí */}
+        <select
+          aria-label="Ordenar por"
+          value={sort.key ? `${sort.key}:${sort.dir}` : ''}
+          onChange={(e) => {
+            const [key, dir] = e.target.value.split(':');
+            setSort(key ? { key, dir } : { key: null, dir: null });
+          }}
+          className="w-full rounded-lg border border-zinc-200 bg-white px-2 py-2 text-[13px] text-zinc-600 outline-none focus:border-[rgb(var(--sys-rgb)/0.6)] focus:ring-2 focus:ring-[rgb(var(--sys-rgb)/0.15)] sm:hidden"
+        >
+          <option value="">Sin ordenar</option>
+          {columns
+            .filter((c) => c.sortable !== false)
+            .flatMap((c) => [
+              <option key={`${c.key}:asc`} value={`${c.key}:asc`}>
+                {c.label} ascendente
+              </option>,
+              <option key={`${c.key}:desc`} value={`${c.key}:desc`}>
+                {c.label} descendente
+              </option>,
+            ])}
+        </select>
+
         {/* iconos junto al buscador, en el extremo derecho */}
         <div className="flex items-center gap-1">
           <FiltersButton
@@ -266,7 +289,7 @@ export default function SysDataTable({
       )}
 
       {/* tabla */}
-      <div className="overflow-x-auto rounded-lg shadow-sm ring-1 ring-zinc-200">
+      <div className="hidden overflow-x-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
         <table className="w-full border-collapse bg-white text-sm">
           <thead>
             <tr className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
@@ -404,6 +427,46 @@ export default function SysDataTable({
         </table>
       </div>
 
+      {/* móvil: cada fila se convierte en una tarjeta */}
+      <div className="space-y-2 sm:hidden">
+        {data.length === 0 ? (
+          <p className="rounded-lg bg-white px-4 py-10 text-center text-sm text-zinc-500 ring-1 ring-zinc-200">
+            {empty}
+          </p>
+        ) : (
+          data.map((row) => {
+            const [head, ...rest] = visible;
+            return (
+              <div
+                key={row[rowKey]}
+                className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-zinc-200"
+              >
+                {head && (
+                  <div className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] px-3 py-2 text-[var(--sys-on)]">
+                    <p className="text-[10px] uppercase tracking-wider opacity-70">{head.label}</p>
+                    <p className="text-sm font-semibold">
+                      {head.render ? head.render(row) : row[head.key]}
+                    </p>
+                  </div>
+                )}
+                <dl className="divide-y divide-zinc-100">
+                  {rest.map((col) => (
+                    <div key={col.key} className="flex items-start justify-between gap-3 px-3 py-2">
+                      <dt className="text-[11px] uppercase tracking-wider text-zinc-500">
+                        {col.label}
+                      </dt>
+                      <dd className="text-right text-[13px] text-zinc-800">
+                        {col.render ? col.render(row) : row[col.key]}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            );
+          })
+        )}
+      </div>
+
       <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500">
         <span>
           {data.length} de {rows.length} registros
@@ -432,7 +495,7 @@ function ColumnSearchPopover({ column, value, onChange, onClose }) {
     <div
       ref={ref}
       className={cn(
-        'absolute left-0 top-full z-40 mt-1 w-56 origin-top rounded-lg bg-white p-2 shadow-xl shadow-zinc-900/20 ring-1 ring-zinc-200 transition-all duration-150',
+        'absolute left-0 top-full z-40 mt-1 w-[min(14rem,calc(100vw-2rem))] origin-top rounded-lg bg-white p-2 shadow-xl shadow-zinc-900/20 ring-1 ring-zinc-200 transition-all duration-150',
         shown ? 'translate-y-0 scale-100 opacity-100' : '-translate-y-1 scale-95 opacity-0'
       )}
     >
@@ -493,7 +556,7 @@ function ColumnsButton({ order, byKey, hidden, onToggle, onShowAll, open, onOpen
 
       <div
         className={cn(
-          'absolute right-0 z-30 mt-2 w-60 origin-top-right rounded-xl bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-zinc-200 transition-all duration-150',
+          'absolute right-0 z-30 mt-2 w-[min(15rem,calc(100vw-2rem))] origin-top-right rounded-xl bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-zinc-200 transition-all duration-150',
           open ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'
         )}
       >
@@ -578,7 +641,7 @@ function FiltersButton({ columns, filters, setFilters, open, onToggle, onClose }
 
       <div
         className={cn(
-          'absolute right-0 z-30 mt-2 w-80 origin-top-right rounded-xl bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-zinc-200 transition-all duration-150',
+          'absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-2rem))] origin-top-right rounded-xl bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-zinc-200 transition-all duration-150',
           open ? 'scale-100 opacity-100' : 'pointer-events-none scale-95 opacity-0'
         )}
       >
