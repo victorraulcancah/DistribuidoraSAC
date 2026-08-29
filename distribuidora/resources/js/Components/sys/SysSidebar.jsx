@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronLeft, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSystem } from '@/Components/systems/SystemThemeProvider';
 import { getModules } from '@/data/modules';
@@ -8,7 +8,7 @@ import { getModules } from '@/data/modules';
  * Barra lateral de un sistema. No sabe de colores: toma el del contenedor,
  * así que la misma pieza sirve para los cinco sistemas.
  */
-export default function SysSidebar({ activeModule, onSelect, onExit, mobileOpen, onCloseMobile }) {
+export default function SysSidebar({ activeModule, onSelect, mobileOpen, onCloseMobile }) {
   const system = useSystem();
   const [collapsed, setCollapsed] = useState(false);
   // Arrancan todos plegados; se guarda solo lo que el usuario abre.
@@ -48,7 +48,7 @@ export default function SysSidebar({ activeModule, onSelect, onExit, mobileOpen,
           </div>
           {!collapsed && (
             <div className="min-w-0 leading-tight">
-              <p className="truncate text-sm font-bold tracking-tight">{system?.id}</p>
+              <p className="truncate text-sm font-bold tracking-tight">{system?.label ?? system?.id}</p>
               <p className="truncate text-[10px] opacity-70">{system?.full}</p>
             </div>
           )}
@@ -153,19 +153,6 @@ export default function SysSidebar({ activeModule, onSelect, onExit, mobileOpen,
 
         {/* pie */}
         <div className="space-y-0.5 border-t border-zinc-100 p-2">
-          <button
-            type="button"
-            onClick={onExit}
-            title={collapsed ? 'Cambiar de sistema' : undefined}
-            className={cn(
-              'flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-[13px] text-zinc-600 transition-colors hover:bg-zinc-50 hover:text-zinc-900',
-              collapsed && 'justify-center',
-            )}
-          >
-            <ChevronLeft size={16} className="shrink-0 text-zinc-400" />
-            {!collapsed && <span className="truncate">Cambiar de sistema</span>}
-          </button>
-
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}

@@ -260,6 +260,14 @@ export const modulesBySystem = {
       ],
     },
   ],
+
+  CONFIG: [
+    {
+      group: 'General',
+      icon: Gauge,
+      items: [{ id: 'usuarios', label: 'Usuarios', icon: Users }],
+    },
+  ],
 };
 
 export const getModules = (systemId) => modulesBySystem[systemId] ?? [];

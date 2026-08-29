@@ -4,6 +4,7 @@ import {
   Truck,
   PackageCheck,
   BriefcaseBusiness,
+  Settings,
 } from 'lucide-react';
 
 /**
@@ -60,6 +61,17 @@ export const systems = [
     description: 'Empleados, asistencia, nómina y evaluación de desempeño.',
     headline: 'Tu gente, del ingreso a la nómina',
     pitch: 'Empleados, asistencia, vacaciones, nómina y desempeño. Un solo lugar para todo el equipo.',
+  },
+  {
+    id: 'CONFIG',
+    // `label` se usa donde el id quedaría críptico; el resto de sistemas no lo necesita.
+    label: 'Configuración',
+    // `internal` lo deja fuera del carrusel del login: no es un sistema que vender.
+    internal: true,
+    color: '#475569',
+    icon: Settings,
+    full: 'Configuración del sistema',
+    description: 'Usuarios, accesos y ajustes generales de la suite.',
   },
 ];
 

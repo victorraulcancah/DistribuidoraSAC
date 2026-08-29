@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { systems } from '@/data/systems';
+import { systems as allSystems } from '@/data/systems';
 import SystemThemeProvider from '@/Components/systems/SystemThemeProvider';
 import SysProgressBar from '@/Components/sys/SysProgressBar';
 import ERPPreview from './modules/ERPPreview';
@@ -9,6 +9,9 @@ import DMSPreview from './modules/DMSPreview';
 import HRISPreview from './modules/HRISPreview';
 
 const SLIDE_MS = 6000;
+
+// El carrusel muestra solo los sistemas de negocio, no los internos.
+const systems = allSystems.filter((s) => !s.internal);
 
 // Lo único que el carrusel añade a `systems`: qué maqueta ilustra cada uno.
 const previews = {

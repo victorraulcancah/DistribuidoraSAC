@@ -5,6 +5,7 @@ import { findModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
 import UserMenu from './UserMenu';
 import NotificationsMenu from './NotificationsMenu';
+import SystemSwitcher from './SystemSwitcher';
 import SysSidebar from '@/Components/sys/SysSidebar';
 import SysBadge from '@/Components/sys/SysBadge';
 import SysDataTable from '@/Components/sys/SysDataTable';
@@ -43,7 +44,7 @@ const clientesColumns = [
   },
 ];
 
-export default function SystemPanel({ systemId, user, onExit, onLogout }) {
+export default function SystemPanel({ systemId, user, onExit, onLogout, onSwitchSystem }) {
   const system = getSystem(systemId);
   const [activeModule, setActiveModule] = useState('dashboard');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,7 +59,6 @@ export default function SystemPanel({ systemId, user, onExit, onLogout }) {
       <SysSidebar
         activeModule={activeModule}
         onSelect={setActiveModule}
-        onExit={onExit}
         mobileOpen={menuOpen}
         onCloseMobile={() => setMenuOpen(false)}
       />
@@ -78,10 +78,11 @@ export default function SystemPanel({ systemId, user, onExit, onLogout }) {
               <ModuleIcon size={18} className="shrink-0 text-[rgb(var(--sys-rgb))]" />
             )}
             <h1 className="truncate text-sm font-semibold text-zinc-900">{current?.label}</h1>
-            <SysBadge className="hidden sm:inline-flex">{system?.id}</SysBadge>
+            <SysBadge className="hidden sm:inline-flex">{system?.label ?? system?.id}</SysBadge>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
+            <SystemSwitcher currentId={systemId} onSelect={onSwitchSystem} onExit={onExit} />
             <UserMenu user={user} onLogout={onLogout} />
             <NotificationsMenu />
           </div>

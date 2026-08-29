@@ -68,7 +68,14 @@ export default function Login() {
 
   if (user && systemId) {
     return (
-      <SystemPanel systemId={systemId} user={user} onExit={exitSystem} onLogout={logout} />
+      <SystemPanel
+        key={systemId}
+        systemId={systemId}
+        user={user}
+        onExit={exitSystem}
+        onLogout={logout}
+        onSwitchSystem={enterSystem}
+      />
     );
   }
 

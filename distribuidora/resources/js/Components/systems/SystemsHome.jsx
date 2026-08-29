@@ -25,20 +25,15 @@ export default function SystemsHome({ user, onEnter, onLogout }) {
           </h1>
           <p className="mt-1.5 text-sm text-zinc-500">Suite operativa para tu negocio</p>
           <p className="mt-6 max-w-md text-sm leading-relaxed text-zinc-500">
-            Bienvenido, {user?.name ?? 'usuario'}. Cinco sistemas integrados con una sola base de
-            datos. Elige uno para empezar a trabajar.
+            Bienvenido, {user?.name ?? 'usuario'}. {systems.length} sistemas integrados con una
+            sola base de datos. Elige uno para empezar a trabajar.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {systems.slice(0, 3).map((sys) => (
+          {systems.map((sys) => (
             <SystemCard key={sys.id} sys={sys} onEnter={onEnter} />
           ))}
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:col-span-2 sm:grid-cols-2 lg:col-span-3 lg:mx-auto lg:w-2/3">
-            {systems.slice(3).map((sys) => (
-              <SystemCard key={sys.id} sys={sys} onEnter={onEnter} />
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -61,7 +56,7 @@ function SystemCard({ sys, onEnter }) {
             <Icon size={22} />
           </SysIconBox>
           <div className="min-w-0 flex-1">
-            <p className="text-base font-bold tracking-tight">{sys.id}</p>
+            <p className="text-base font-bold tracking-tight">{sys.label ?? sys.id}</p>
             <p className="truncate text-xs opacity-70">{sys.full}</p>
             <p className="mt-0.5 truncate text-xs opacity-60">{sys.description}</p>
           </div>
