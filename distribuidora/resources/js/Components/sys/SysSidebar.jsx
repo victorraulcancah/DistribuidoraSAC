@@ -60,9 +60,34 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
             // El grupo que contiene el módulo activo se marca en la cabecera,
             // pero plegado no muestra ningún elemento.
             const hasActive = group.items.some((i) => i.id === activeModule);
-            const isOpen = collapsed || !!opened[group.group];
             const GroupIcon = group.icon;
+            // Con la barra contraída no cabe ningún módulo: se muestra solo el
+            // icono del grupo, y al pulsarlo la barra se expande abriéndolo.
+            const isOpen = collapsed ? false : !!opened[group.group];
             const visible = isOpen ? group.items : [];
+
+            if (collapsed) {
+              return (
+                <button
+                  key={group.group}
+                  type="button"
+                  title={group.group}
+                  aria-label={group.group}
+                  onClick={() => {
+                    setCollapsed(false);
+                    setOpened((prev) => ({ ...prev, [group.group]: true }));
+                  }}
+                  className={cn(
+                    'mb-1 flex w-full items-center justify-center rounded-lg p-2 transition-colors',
+                    hasActive
+                      ? 'bg-[rgb(var(--sys-rgb)/0.12)] text-[rgb(var(--sys-rgb))]'
+                      : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-700'
+                  )}
+                >
+                  {GroupIcon && <GroupIcon size={18} />}
+                </button>
+              );
+            }
 
             return (
               <div key={group.group} className="mb-3 last:mb-0">
