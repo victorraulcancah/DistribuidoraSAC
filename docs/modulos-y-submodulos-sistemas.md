@@ -63,7 +63,7 @@ Controla la existencia valorizada de productos desde una perspectiva administrat
 Gestiona el flujo real de dinero de la empresa, incluyendo cajas, bancos, pagos, cobranzas y proyeccion de liquidez.
 
 - Caja
-- Bancos
+- Movimientos bancarios
 - Ingresos
 - Egresos
 - Transferencias bancarias
@@ -123,28 +123,33 @@ Administra los parametros generales del sistema, accesos, reglas internas y estr
 - Impuestos
 - Monedas y tipo de cambio
 - Plantillas y formatos
+- Bancos y cuentas bancarias
+- Categorias de productos
+- Unidades de medida
+- Estados de documentos
+- Motivos de anulacion
+- Motivos de devolucion
+- Condiciones de pago
+- Metodos de pago
 
 ## 2. WMS - Warehouse Management System
 
 El WMS gestiona la operacion fisica del almacen. Su responsabilidad principal es controlar recepcion, ubicacion, almacenamiento, picking, packing, despacho, movimientos internos y exactitud operativa del inventario.
 
-### 2.1 Configuracion de almacenes
+### 2.1 Almacenes y ubicaciones
 
-- Almacenes
-- Areas
-- Zonas
-- Pasillos
-- Racks
-- Niveles
-- Ubicaciones
-- Muelles
+Consulta y administracion operativa de la estructura fisica del almacen previamente definida en Configuraciones.
+
+- Mapa de almacenes
+- Mapa de ubicaciones
+- Ocupacion por zona
+- Capacidad por ubicacion
+- Disponibilidad de ubicaciones
 
 ### 2.2 Maestros logisticos
 
 - SKU
 - Productos
-- Categorias
-- Unidades
 - Codigos de barras
 - Lotes
 - Series
@@ -164,7 +169,6 @@ El WMS gestiona la operacion fisica del almacen. Su responsabilidad principal es
 
 ### 2.4 Putaway y almacenamiento
 
-- Reglas de ubicacion
 - Asignacion de ubicacion
 - Putaway automatico
 - Putaway manual
@@ -180,8 +184,8 @@ El WMS gestiona la operacion fisica del almacen. Su responsabilidad principal es
 - Stock bloqueado
 - Stock en transito
 - Kardex operativo
-- Lotes
-- Series
+- Stock por lote
+- Stock por serie
 - Vencimientos
 
 ### 2.6 Picking
@@ -265,6 +269,20 @@ El WMS gestiona la operacion fisica del almacen. Su responsabilidad principal es
 - Auditoria
 - Bitacora de cambios
 - Parametros operativos de almacen
+- Almacenes
+- Areas
+- Zonas
+- Pasillos
+- Racks
+- Niveles
+- Ubicaciones
+- Muelles
+- Categorias logisticas
+- Unidades logisticas
+- Reglas de ubicacion
+- Motivos de ajuste
+- Estados de recepcion
+- Estados de despacho
 
 ## 3. TMS - Transportation Management System
 
@@ -292,7 +310,6 @@ El TMS gestiona la planificacion, ejecucion y control del transporte. Su alcance
 
 - Creacion de rutas
 - Optimizacion de rutas
-- Zonas
 - Paradas
 - Distancias
 - Ventanas horarias
@@ -300,7 +317,6 @@ El TMS gestiona la planificacion, ejecucion y control del transporte. Su alcance
 ### 3.4 Flota
 
 - Vehiculos
-- Tipos de vehiculo
 - Capacidad
 - Kilometraje
 - Combustible
@@ -314,7 +330,7 @@ El TMS gestiona la planificacion, ejecucion y control del transporte. Su alcance
 - Documentos
 - Asignaciones
 - Historial de viajes
-- Incidencias
+- Historial de incidencias del conductor
 
 ### 3.6 Tracking
 
@@ -386,6 +402,13 @@ El TMS gestiona la planificacion, ejecucion y control del transporte. Su alcance
 - Auditoria
 - Bitacora de cambios
 - Parametros de transporte
+- Tipos de vehiculo
+- Tipos de servicio
+- Zonas de reparto
+- Tarifarios base
+- Motivos de incidencia
+- Estados de transporte
+- Estados de entrega
 
 ## 4. DMS - Document Management System
 
@@ -395,10 +418,6 @@ El DMS administra documentos, archivos, versiones, busqueda, aprobaciones, firma
 
 - Documentos
 - Carpetas
-- Categorias
-- Tipos de documento
-- Etiquetas
-- Metadatos
 
 ### 4.2 Archivo
 
@@ -454,7 +473,6 @@ El DMS administra documentos, archivos, versiones, busqueda, aprobaciones, firma
 
 ### 4.8 Retencion y archivo historico
 
-- Politicas de retencion
 - Vencimientos
 - Archivo historico
 - Eliminacion
@@ -477,7 +495,7 @@ El DMS administra documentos, archivos, versiones, busqueda, aprobaciones, firma
 - Documentos vencidos
 - Firmas pendientes
 - Aprobaciones pendientes
-- Auditoria
+- Reporte de auditoria
 
 ### 4.11 Configuraciones
 
@@ -488,6 +506,13 @@ El DMS administra documentos, archivos, versiones, busqueda, aprobaciones, firma
 - Auditoria
 - Bitacora de cambios
 - Parametros documentales
+- Categorias documentales
+- Tipos de documento
+- Etiquetas
+- Metadatos
+- Politicas de retencion
+- Niveles de confidencialidad
+- Estados de aprobacion
 
 ## 5. RRHH - Recursos Humanos
 
@@ -507,15 +532,10 @@ El sistema de RRHH gestiona el ciclo de vida del trabajador, desde el reclutamie
 
 ### 5.2 Organizacion
 
-- Empresas
-- Sucursales
-- Areas
-- Departamentos
-- Puestos
-- Cargos
-- Centros de costo
 - Organigrama
 - Jerarquias
+- Asignacion organizacional
+- Estructura de equipos
 
 ### 5.3 Reclutamiento
 
@@ -668,6 +688,18 @@ El sistema de RRHH gestiona el ciclo de vida del trabajador, desde el reclutamie
 - Auditoria
 - Bitacora de cambios
 - Parametros de RRHH
+- Empresas
+- Sucursales
+- Areas
+- Departamentos
+- Puestos
+- Cargos
+- Centros de costo
+- Tipos de contrato
+- Tipos de permiso
+- Tipos de licencia
+- Conceptos de nomina
+- Estados del empleado
 
 ## Resumen de responsabilidades
 
@@ -687,3 +719,84 @@ El sistema de RRHH gestiona el ciclo de vida del trabajador, desde el reclutamie
 - El DMS centraliza documentos, versiones y archivo; otros sistemas pueden adjuntar o consultar documentos, pero no reemplazar la gestion documental.
 - RRHH administra colaboradores y nomina; los documentos laborales pueden integrarse con el DMS cuando se requiera archivo formal.
 - Usuarios, roles, permisos, flujos de aprobacion, auditoria y bitacora de cambios deben ir dentro de Configuraciones en cada sistema o en una capa transversal de administracion si la plataforma se gestiona de forma unificada.
+
+## Sidebar sugerido por sistema
+
+Esta estructura sirve como base para organizar el menu lateral de la plataforma. El sidebar debe mostrar primero los modulos operativos y dejar los catalogos, reglas y parametros dentro de Configuraciones.
+
+### ERP
+
+- Finanzas y Contabilidad
+- Ventas
+- Compras
+- Inventario administrativo
+- Tesoreria
+- Clientes y Proveedores
+- Presupuestos y Costos
+- Reportes y BI
+- Configuraciones
+
+### WMS
+
+- Almacenes y ubicaciones
+- Maestros logisticos
+- Recepcion
+- Putaway y almacenamiento
+- Inventario operativo
+- Picking
+- Packing
+- Despacho
+- Movimientos internos
+- Inventario fisico
+- Calidad
+- Equipos y dispositivos
+- Reportes y KPIs
+- Configuraciones
+
+### TMS
+
+- Ordenes de transporte
+- Planificacion
+- Ruteo
+- Flota
+- Conductores
+- Tracking
+- Entregas y POD
+- Incidencias
+- Transportistas
+- Costos de transporte
+- Reportes y KPIs
+- Configuraciones
+
+### DMS
+
+- Gestion documental
+- Archivo
+- Busqueda
+- Versionamiento
+- Flujos de trabajo
+- Firma electronica
+- Seguridad documental
+- Retencion y archivo historico
+- Integraciones
+- Reportes
+- Configuraciones
+
+### RRHH
+
+- Empleados
+- Organizacion
+- Reclutamiento
+- Onboarding
+- Asistencia
+- Vacaciones y permisos
+- Nomina
+- Desempeno
+- Capacitacion
+- Beneficios
+- Activos del empleado
+- Desvinculacion
+- Portal del empleado
+- Portal del jefe
+- Reportes y KPIs
+- Configuraciones
