@@ -212,7 +212,7 @@ export default function ClientelaList({ tipo }) {
       {
         key: 'vendedor',
         label: 'Vendedor',
-        render: (row) => (row.vendedor ? row.vendedor.name : esCliente ? '—' : '—'),
+        render: (row) => row.vendedor?.name ?? '—',
       },
       {
         key: 'estado',

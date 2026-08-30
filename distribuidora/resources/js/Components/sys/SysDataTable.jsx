@@ -28,10 +28,75 @@ const OPERATORS = [
   { id: 'lt', label: 'menor que' },
 ];
 
-const asText = (value) => (value == null ? '' : String(value)).toLowerCase();
+/**
+ * Texto comparable de un valor: sin acentos y en minúsculas, para que buscar
+ * "razon" encuentre "Razón" y las mayúsculas den igual.
+ */
+const asText = (value) =>
+  (value == null ? '' : String(value))
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase();
 
-function matchesFilter(row, filter) {
-  const raw = row[filter.column];
+/**
+ * Texto plano de lo que una columna pinta. Recorre elementos de React para
+ * sacar su contenido legible, de modo que una celda con `render` siga siendo
+ * buscable sin que la tabla que la usa tenga que declarar nada.
+ */
+function plainText(node, depth = 0) {
+  if (node == null || typeof node === 'boolean' || depth > 6) return '';
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  if (Array.isArray(node)) return node.map((n) => plainText(n, depth + 1)).join(' ');
+
+  const props = node.props;
+  if (!props) return '';
+
+  // Los componentes propios suelen recibir su texto en `children`, `value` o
+  // `label` (SysBadge, EstadoTag y similares).
+  return [props.children, props.value, props.label]
+    .map((p) => plainText(p, depth + 1))
+    .filter(Boolean)
+    .join(' ');
+}
+
+/** Propiedades habituales cuando una celda apunta a un objeto relacionado. */
+const TEXT_KEYS = ['name', 'nombre', 'label', 'razon_social', 'descripcion', 'title', 'codigo'];
+
+/**
+ * Valor de una celda para buscar, ordenar y filtrar. Se deduce sola:
+ *
+ *   1. `col.value(row)` si la columna lo declara (escape hatch opcional).
+ *   2. el campo `row[col.key]`, si es un valor simple.
+ *   3. la propiedad textual del objeto, si el campo es una relación.
+ *   4. lo que devuelva `render`, incluso si es JSX.
+ *
+ * Así una columna calculada funciona sin configuración extra.
+ */
+function cellValue(col, row) {
+  if (!col || !row) return '';
+  if (col.value) return col.value(row);
+
+  const raw = row[col.key];
+
+  if (raw !== null && raw !== undefined && typeof raw !== 'object') return raw;
+
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    const key = TEXT_KEYS.find((k) => typeof raw[k] === 'string');
+    if (key) return raw[key];
+  }
+
+  // Último recurso: lo que se ve en pantalla.
+  if (col.render) {
+    const painted = col.render(row);
+    if (typeof painted === 'string' || typeof painted === 'number') return painted;
+    return plainText(painted);
+  }
+
+  return raw ?? '';
+}
+
+function matchesFilter(row, filter, col) {
+  const raw = cellValue(col ?? { key: filter.column }, row);
   const value = asText(raw);
   const term = asText(filter.value);
 
@@ -168,36 +233,38 @@ export default function SysDataTable({
 
     // buscador general
     if (search.trim()) {
-      const term = search.toLowerCase();
+      const term = asText(search);
       result = result.filter((row) =>
-        visible.some((col) => asText(row[col.key]).includes(term))
+        visible.some((col) => asText(cellValue(col, row)).includes(term))
       );
     }
 
     // búsqueda por columna
     for (const [key, term] of Object.entries(columnSearch)) {
       if (!term?.trim()) continue;
-      result = result.filter((row) => asText(row[key]).includes(term.toLowerCase()));
+      const col = byKey[key];
+      result = result.filter((row) => asText(cellValue(col, row)).includes(asText(term)));
     }
 
     // filtros acumulados
     for (const filter of filters) {
-      result = result.filter((row) => matchesFilter(row, filter));
+      result = result.filter((row) => matchesFilter(row, filter, byKey[filter.column]));
     }
 
     // orden
     if (sort.key) {
       const factor = sort.dir === 'desc' ? -1 : 1;
+      const col = byKey[sort.key];
       result = [...result].sort((a, b) => {
-        const x = a[sort.key];
-        const y = b[sort.key];
+        const x = cellValue(col, a);
+        const y = cellValue(col, b);
         if (typeof x === 'number' && typeof y === 'number') return (x - y) * factor;
         return String(x ?? '').localeCompare(String(y ?? ''), 'es', { numeric: true }) * factor;
       });
     }
 
     return result;
-  }, [rows, search, columnSearch, filters, sort, visible]);
+  }, [rows, search, columnSearch, filters, sort, visible, byKey]);
 
   // Cualquier cambio en el filtrado devuelve el listado a la primera tanda.
   useEffect(() => {
