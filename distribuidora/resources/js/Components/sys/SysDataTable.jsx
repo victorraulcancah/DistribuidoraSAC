@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDown,
   ArrowUp,
@@ -279,42 +279,15 @@ export default function SysDataTable({
   const from = (page - 1) * perPage;
   const pageRows = useMemo(() => data.slice(from, from + perPage), [data, from, perPage]);
 
-  // La cabecera vive en su propia tabla: hay que copiarle los anchos que el
-  // cuerpo calcula por contenido, y arrastrarla en el scroll horizontal.
-  const headRef = useRef(null);
   const bodyRef = useRef(null);
-  const bodyTableRef = useRef(null);
-  const [colWidths, setColWidths] = useState(null);
-  const [totalWidth, setTotalWidth] = useState(null);
-
-  useLayoutEffect(() => {
-    const table = bodyTableRef.current;
-    if (!table) return;
-
-    const measure = () => {
-      const fila = table.querySelector('tbody tr');
-      if (!fila) return setColWidths(null);
-      const anchos = [...fila.children].map((td) => td.getBoundingClientRect().width);
-      const total = anchos.reduce((a, b) => a + b, 0);
-      // Con la pestaña oculta las medidas salen 0: aplicarlas colapsaría la
-      // cabecera, así que se descartan y se deja el ancho automático.
-      if (!total) return;
-      setColWidths(anchos);
-      setTotalWidth(total);
-    };
-
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(table);
-    return () => ro.disconnect();
-  }, [pageRows, visible, widths]);
 
   // Al tocar el fondo se avanza UNA página y la lista vuelve arriba. Con un
   // observador de intersección el centinela seguía visible tras el cambio y
   // encadenaba varias páginas de golpe.
   const onBodyScroll = (e) => {
     const el = e.currentTarget;
-    if (headRef.current) headRef.current.scrollLeft = el.scrollLeft;
+    // Sin desbordamiento vertical no se pagina: tope y fondo coincidirían.
+    if (el.scrollHeight <= el.clientHeight + 4) return;
 
     const alFondo = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
     if (alFondo && page < pageCount) setPage((p) => Math.min(p + 1, pageCount));
@@ -434,27 +407,14 @@ export default function SysDataTable({
         </div>
       )}
 
-      {/* tabla */}
-      {/*
-        La cabecera y las filas van en dos tablas: así la barra vertical
-        aparece dentro de la tabla y solo junto a las filas, sin abarcar la
-        cabecera. El ancho de las columnas se mide del cuerpo y se copia a la
-        cabecera, y el scroll horizontal se sincroniza entre ambas.
-      */}
-      <div className="hidden overflow-hidden rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
-        <div ref={headRef} className="overflow-hidden">
-          <table
-            className="border-collapse bg-white text-sm"
-            style={{ width: colWidths ? totalWidth : '100%', tableLayout: colWidths ? 'fixed' : 'auto' }}
-          >
-            {colWidths && (
-              <colgroup>
-                {colWidths.map((w, i) => (
-                  <col key={i} style={{ width: w }} />
-                ))}
-              </colgroup>
-            )}
-          <thead>
+      {/* tabla: una sola, con la cabecera pegada arriba dentro del scroll */}
+      <div
+        ref={bodyRef}
+        onScroll={onBodyScroll}
+        className="hidden max-h-[60vh] overflow-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block"
+      >
+        <table className="w-full border-collapse bg-white text-sm">
+          <thead className="sticky top-0 z-20">
             <tr className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
               {visible.map((col) => {
                 const isSorted = sort.key === col.key;
@@ -583,11 +543,6 @@ export default function SysDataTable({
               )}
             </tr>
           </thead>
-          </table>
-        </div>
-
-        <div ref={bodyRef} onScroll={onBodyScroll} className="max-h-[55vh] overflow-auto">
-          <table ref={bodyTableRef} className="w-full border-collapse bg-white text-sm">
           <tbody>
             {pageRows.length === 0 ? (
               <tr>
@@ -625,9 +580,7 @@ export default function SysDataTable({
               ))
             )}
           </tbody>
-          </table>
-
-        </div>
+        </table>
       </div>
 
       {/* móvil: cada fila se convierte en una tarjeta */}
