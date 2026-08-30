@@ -49,7 +49,7 @@ export default function SystemPanel({
   return (
     <SystemThemeProvider
       system={system}
-      className="flex min-h-dvh w-full bg-zinc-50/60 font-sans antialiased"
+      className="flex h-dvh w-full overflow-hidden bg-zinc-50/60 font-sans antialiased"
     >
       <SysSidebar
         activeModule={activeModule}
@@ -58,8 +58,8 @@ export default function SystemPanel({
         onCloseMobile={() => setMenuOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex shrink-0 items-center justify-between gap-3 border-b border-zinc-200 bg-white px-4 py-3 sm:px-6">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"

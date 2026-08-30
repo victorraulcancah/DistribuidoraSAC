@@ -52,7 +52,7 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
 
       <aside
         className={cn(
-          'z-50 flex shrink-0 flex-col border-r border-zinc-200 bg-white transition-transform duration-200',
+          'z-50 flex h-full shrink-0 flex-col border-r border-zinc-200 bg-white transition-transform duration-200',
           // móvil: panel fuera de pantalla que entra al abrirlo
           'fixed inset-y-0 left-0 w-64',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
@@ -62,7 +62,7 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
         )}
       >
         {/* cabecera: única zona con el color pleno del sistema */}
-        <div className="flex items-center gap-2.5 bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] p-3.5 text-[var(--sys-on)]">
+        <div className="flex shrink-0 items-center gap-2.5 bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] p-3.5 text-[var(--sys-on)]">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[rgb(var(--sys-on-rgb)/0.3)] bg-[rgb(var(--sys-on-rgb)/0.15)]">
             {Icon && <Icon size={18} />}
           </div>
@@ -251,7 +251,7 @@ export default function SysSidebar({ activeModule, onSelect, mobileOpen, onClose
         )}
 
         {/* pie */}
-        <div className="space-y-0.5 border-t border-zinc-100 p-2">
+        <div className="shrink-0 space-y-0.5 border-t border-zinc-100 p-2">
           <button
             type="button"
             onClick={() => setCollapsed((v) => !v)}
