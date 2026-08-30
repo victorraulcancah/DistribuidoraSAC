@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDown,
   ArrowUp,
@@ -279,6 +279,41 @@ export default function SysDataTable({
   const from = (page - 1) * perPage;
   const pageRows = useMemo(() => data.slice(from, from + perPage), [data, from, perPage]);
 
+  // La cabecera vive en su propia tabla: hay que copiarle los anchos que el
+  // cuerpo calcula por contenido, y arrastrarla en el scroll horizontal.
+  const headRef = useRef(null);
+  const bodyRef = useRef(null);
+  const bodyTableRef = useRef(null);
+  const [colWidths, setColWidths] = useState(null);
+  const [totalWidth, setTotalWidth] = useState(null);
+
+  useLayoutEffect(() => {
+    const table = bodyTableRef.current;
+    if (!table) return;
+
+    const measure = () => {
+      const fila = table.querySelector('tbody tr');
+      if (!fila) return setColWidths(null);
+      const anchos = [...fila.children].map((td) => td.getBoundingClientRect().width);
+      const total = anchos.reduce((a, b) => a + b, 0);
+      // Con la pestaña oculta las medidas salen 0: aplicarlas colapsaría la
+      // cabecera, así que se descartan y se deja el ancho automático.
+      if (!total) return;
+      setColWidths(anchos);
+      setTotalWidth(total);
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(table);
+    return () => ro.disconnect();
+  }, [pageRows, visible, widths]);
+
+  /** La cabecera sigue al cuerpo cuando se desplaza en horizontal. */
+  const syncScroll = (e) => {
+    if (headRef.current) headRef.current.scrollLeft = e.currentTarget.scrollLeft;
+  };
+
   // Al llegar al final de la tabla se pasa a la página siguiente sola.
   const endRef = useRef(null);
   useEffect(() => {
@@ -289,7 +324,7 @@ export default function SysDataTable({
       ([entry]) => {
         if (entry.isIntersecting) setPage((p) => Math.min(p + 1, pageCount));
       },
-      { rootMargin: '80px' }
+      { root: bodyRef.current, rootMargin: '80px' }
     );
     io.observe(el);
     return () => io.disconnect();
@@ -405,10 +440,27 @@ export default function SysDataTable({
       )}
 
       {/* tabla */}
-      <div className="hidden overflow-x-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
-        <table className="w-full border-collapse bg-white text-sm">
+      {/*
+        La cabecera y las filas van en dos tablas: así la barra vertical
+        aparece dentro de la tabla y solo junto a las filas, sin abarcar la
+        cabecera. El ancho de las columnas se mide del cuerpo y se copia a la
+        cabecera, y el scroll horizontal se sincroniza entre ambas.
+      */}
+      <div className="hidden overflow-hidden rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
+        <div ref={headRef} className="overflow-hidden">
+          <table
+            className="border-collapse bg-white text-sm"
+            style={{ width: colWidths ? totalWidth : '100%', tableLayout: colWidths ? 'fixed' : 'auto' }}
+          >
+            {colWidths && (
+              <colgroup>
+                {colWidths.map((w, i) => (
+                  <col key={i} style={{ width: w }} />
+                ))}
+              </colgroup>
+            )}
           <thead>
-            <tr className="sticky top-0 z-20 bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
+            <tr className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
               {visible.map((col) => {
                 const isSorted = sort.key === col.key;
                 const isDragged = dragging === col.key;
@@ -536,7 +588,11 @@ export default function SysDataTable({
               )}
             </tr>
           </thead>
+          </table>
+        </div>
 
+        <div ref={bodyRef} onScroll={syncScroll} className="max-h-[55vh] overflow-auto">
+          <table ref={bodyTableRef} className="w-full border-collapse bg-white text-sm">
           <tbody>
             {pageRows.length === 0 ? (
               <tr>
@@ -574,7 +630,11 @@ export default function SysDataTable({
               ))
             )}
           </tbody>
-        </table>
+          </table>
+
+          {/* al asomarse el final de las filas, pasa a la página siguiente */}
+          <div ref={endRef} aria-hidden="true" className="h-px" />
+        </div>
       </div>
 
       {/* móvil: cada fila se convierte en una tarjeta */}
@@ -628,9 +688,6 @@ export default function SysDataTable({
           })
         )}
       </div>
-
-      {/* marca el final de la tabla: al verse, avanza de página */}
-      <div ref={endRef} aria-hidden="true" className="h-px" />
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-zinc-500">
         <div className="flex items-center gap-3">
