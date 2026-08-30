@@ -4,41 +4,78 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class RoleSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     public function run(): void
     {
+        // Roles que pinta el CRUD de usuarios (Configuración → Usuarios).
         $roles = [
-            ['name' => 'administrador', 'display_name' => 'Administrador', 'description' => 'Acceso total a todos los sistemas de la suite.'],
-            ['name' => 'ventas', 'display_name' => 'Ventas', 'description' => 'Ventas, cotizaciones y facturación.'],
-            ['name' => 'almacen', 'display_name' => 'Almacén', 'description' => 'Recepción, almacenamiento y despacho.'],
-            ['name' => 'rrhh', 'display_name' => 'RR. HH.', 'description' => 'Empleados, asistencia y nómina.'],
+            [
+                'name' => 'super-admin',
+                'display_name' => 'Super Administrador',
+                'description' => 'Acceso total a todos los sistemas, módulos y configuración.',
+            ],
+            [
+                'name' => 'admin',
+                'display_name' => 'Administrador',
+                'description' => 'Administra usuarios, clientes, proveedores y la operación diaria.',
+            ],
+            [
+                'name' => 'contador',
+                'display_name' => 'Contador',
+                'description' => 'Finanzas, contabilidad, tesorería y reportes contables.',
+            ],
+            [
+                'name' => 'ventas',
+                'display_name' => 'Ventas',
+                'description' => 'Cotizaciones, pedidos y seguimiento de clientes.',
+            ],
+            [
+                'name' => 'almacen',
+                'display_name' => 'Almacén',
+                'description' => 'Recepción, inventario y picking de mercadería.',
+            ],
+            [
+                'name' => 'despacho',
+                'display_name' => 'Despacho',
+                'description' => 'Planificación de rutas, unidades y entregas.',
+            ],
+            [
+                'name' => 'rrhh',
+                'display_name' => 'RR. HH.',
+                'description' => 'Empleados, asistencia, nómina y desempeño.',
+            ],
+            [
+                'name' => 'lectura',
+                'display_name' => 'Solo lectura',
+                'description' => 'Usuario visualizador: puede ver información sin editar.',
+            ],
         ];
 
-        foreach ($roles as $data) {
-            Role::updateOrCreate(['name' => $data['name']], [
-                'display_name' => $data['display_name'],
-                'description' => $data['description'],
-                'estado' => 'Activo',
-            ]);
+        foreach ($roles as $role) {
+            Role::updateOrCreate(
+                ['name' => $role['name']],
+                $role
+            );
         }
 
-        $adminRole = Role::where('name', 'administrador')->first();
+        // Asignaciones por defecto a los usuarios existentes.
+        $superAdmin = Role::where('name', 'super-admin')->first();
+        $admin = Role::where('name', 'admin')->first();
 
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@distribuidora.com'],
-            [
-                'name' => 'Administrador',
-                'password' => Hash::make('password123'),
-                'email_verified_at' => now(),
-            ]
-        );
+        $super = User::where('email', 'admin@distribuidora.com')->first();
+        if ($super && $superAdmin) {
+            $super->roles()->syncWithoutDetaching([$superAdmin->id]);
+        }
 
-        if ($adminRole) {
-            $admin->roles()->syncWithoutDetaching([$adminRole->id]);
+        $casual = User::where('email', 'distribuidorasac@distribuidora.com')->first();
+        if ($casual && $admin) {
+            $casual->roles()->syncWithoutDetaching([$admin->id]);
         }
     }
 }
