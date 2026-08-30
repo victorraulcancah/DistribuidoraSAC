@@ -500,7 +500,10 @@ export default function SysDataTable({
       </div>
 
       {/* móvil: cada fila se convierte en una tarjeta */}
-      <div onScroll={onScroll} className="max-h-[70vh] space-y-2 overflow-y-auto sm:hidden">
+      <div
+        onScroll={onScroll}
+        className="-m-1 max-h-[70vh] space-y-2 overflow-y-auto p-1 sm:hidden"
+      >
         {pageRows.length === 0 ? (
           <p className="rounded-xl bg-white px-4 py-10 text-center text-sm text-zinc-500 ring-1 ring-zinc-200">
             {empty}
