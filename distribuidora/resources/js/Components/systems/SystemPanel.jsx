@@ -16,6 +16,7 @@ import Direcciones from '@/Pages/ERP/Direcciones';
 import CondicionesComerciales from '@/Pages/ERP/CondicionesComerciales';
 import LimitesCredito from '@/Pages/ERP/LimitesCredito';
 import HistorialComercial from '@/Pages/ERP/HistorialComercial';
+import Usuarios from '@/Pages/CONFIG/Usuarios';
 
 /**
  * Pantallas ya construidas, por `SISTEMA:modulo`. Lo que no esté aquí
@@ -29,6 +30,7 @@ const screens = {
   'ERP:clientes-y-proveedores.condiciones-comerciales': CondicionesComerciales,
   'ERP:clientes-y-proveedores.limites-de-credito': LimitesCredito,
   'ERP:clientes-y-proveedores.historial-comercial': HistorialComercial,
+  'CONFIG:accesos.usuarios': Usuarios,
 };
 
 export default function SystemPanel({
