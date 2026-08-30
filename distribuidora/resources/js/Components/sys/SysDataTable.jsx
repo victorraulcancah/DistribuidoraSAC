@@ -24,6 +24,9 @@ import { cn } from '@/lib/utils';
  * Todo el trabajo (filtrar, ordenar) se hace en cliente sobre `rows`.
  */
 
+/** Ancho fijo de la columna de acciones: no se redimensiona ni se reparte. */
+const ACTIONS_WIDTH = 140;
+
 const OPERATORS = [
   { id: 'contains', label: 'contiene' },
   { id: 'equals', label: 'es igual a' },
@@ -279,13 +282,44 @@ export default function SysDataTable({
   const from = (page - 1) * perPage;
   const pageRows = useMemo(() => data.slice(from, from + perPage), [data, from, perPage]);
 
+  const headRef = useRef(null);
   const bodyRef = useRef(null);
 
-  // Al tocar el fondo se avanza UNA página y la lista vuelve arriba. Con un
-  // observador de intersección el centinela seguía visible tras el cambio y
-  // encadenaba varias páginas de golpe.
+  /*
+   * La cabecera va fuera del área con scroll, para que la barra aparezca solo
+   * junto a las filas. Ambas tablas usan `table-layout: fixed` con los mismos
+   * anchos declarados, así que quedan alineadas sin medir nada del DOM.
+   *
+   * El ancho de la barra se descuenta a la tabla de la cabecera; ese hueco lo
+   * cubre el fondo de su contenedor, que lleva el mismo degradado, de modo que
+   * la franja de color llega hasta el borde sin dejar blanco.
+   */
+  const [scrollbar, setScrollbar] = useState(0);
+
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+
+    const medir = () => setScrollbar(el.offsetWidth - el.clientWidth);
+    medir();
+
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Anchos de columna: los arrastrados mandan; el resto se reparte por igual.
+  const colTemplate = useMemo(() => {
+    const auto = `${100 / Math.max(1, visible.length)}%`;
+    const cols = visible.map((col) => widths[col.key] ?? auto);
+    if (actions) cols.push(ACTIONS_WIDTH);
+    return cols;
+  }, [visible, widths, actions]);
+
   const onBodyScroll = (e) => {
     const el = e.currentTarget;
+    if (headRef.current) headRef.current.scrollLeft = el.scrollLeft;
+
     // Sin desbordamiento vertical no se pagina: tope y fondo coincidirían.
     if (el.scrollHeight <= el.clientHeight + 4) return;
 
@@ -407,25 +441,35 @@ export default function SysDataTable({
         </div>
       )}
 
-      {/* tabla: una sola, con la cabecera pegada arriba dentro del scroll */}
-      <div
-        ref={bodyRef}
-        onScroll={onBodyScroll}
-        className="hidden max-h-[60vh] overflow-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block"
-      >
-        <table className="w-full border-collapse bg-white text-sm">
-          <thead className="sticky top-0 z-20">
-            <tr className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
-              {visible.map((col) => {
-                const isSorted = sort.key === col.key;
-                const isDragged = dragging === col.key;
-                const isTarget = dragOver === col.key && dragging !== col.key;
+      {/* tabla */}
+      <div className="hidden overflow-hidden rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
+        {/* el degradado va en el contenedor: cubre también el hueco que deja
+            la barra de scroll, así la franja llega hasta el borde */}
+        <div
+          ref={headRef}
+          className="overflow-hidden bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))]"
+        >
+          <table
+            className="border-collapse text-sm"
+            style={{ tableLayout: 'fixed', width: `calc(100% - ${scrollbar}px)` }}
+          >
+            <colgroup>
+              {colTemplate.map((w, i) => (
+                <col key={i} style={{ width: w }} />
+              ))}
+            </colgroup>
 
-                return (
+            <thead>
+              <tr className="text-[var(--sys-on)]">
+                {visible.map((col) => {
+                  const isSorted = sort.key === col.key;
+                  const isDragged = dragging === col.key;
+                  const isTarget = dragOver === col.key && dragging !== col.key;
+
+                  return (
                   <th
                     key={col.key}
                     scope="col"
-                    style={widths[col.key] ? { width: widths[col.key] } : undefined}
                     draggable={resizingKey === null}
                     onDragStart={() => setDragging(col.key)}
                     onDragEnd={() => {
@@ -532,17 +576,32 @@ export default function SysDataTable({
                 );
               })}
 
-              {/* columna fija: no se mueve, no se oculta ni se ordena */}
-              {actions && (
-                <th
-                  scope="col"
-                  className="w-px whitespace-nowrap px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wider"
-                >
-                  Acciones
-                </th>
-              )}
-            </tr>
-          </thead>
+                {/* columna fija: no se mueve, no se oculta ni se ordena */}
+                {actions && (
+                  <th
+                    scope="col"
+                    className="whitespace-nowrap px-3 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wider"
+                  >
+                    Acciones
+                  </th>
+                )}
+              </tr>
+            </thead>
+          </table>
+        </div>
+
+        {/* solo las filas se desplazan: la barra queda por debajo de la cabecera */}
+        <div ref={bodyRef} onScroll={onBodyScroll} className="max-h-[55vh] overflow-auto">
+          <table
+            className="w-full border-collapse bg-white text-sm"
+            style={{ tableLayout: 'fixed' }}
+          >
+            <colgroup>
+              {colTemplate.map((w, i) => (
+                <col key={i} style={{ width: w }} />
+              ))}
+            </colgroup>
+
           <tbody>
             {pageRows.length === 0 ? (
               <tr>
@@ -563,7 +622,9 @@ export default function SysDataTable({
                     <td
                       key={col.key}
                       className={cn(
-                        'px-3 py-1.5 text-zinc-700 transition-all duration-200',
+                        // con `table-fixed` el contenido no puede ensanchar la
+                        // columna: lo que no cabe se recorta
+                        'truncate px-3 py-1.5 text-zinc-700',
                         col.align === 'right' && 'text-right tabular-nums'
                       )}
                     >
@@ -572,15 +633,16 @@ export default function SysDataTable({
                   ))}
 
                   {actions && (
-                    <td className="w-px whitespace-nowrap px-3 py-1.5">
-                      <div className="flex items-center justify-end gap-1">{actions(row)}</div>
+                    <td className="whitespace-nowrap px-3 py-1.5">
+                      <div className="flex items-center justify-center gap-1">{actions(row)}</div>
                     </td>
                   )}
                 </tr>
               ))
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
 
       {/* móvil: cada fila se convierte en una tarjeta */}
