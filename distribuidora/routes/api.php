@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Clientes\ClienteController;
+use App\Http\Controllers\Api\Proveedores\ProveedorController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -17,4 +19,9 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
     Route::get('/', [AuthController::class, 'me']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::put('/password', [AuthController::class, 'updatePassword']);
+});
+
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('clientes', ClienteController::class);
+    Route::apiResource('proveedores', ProveedorController::class);
 });
