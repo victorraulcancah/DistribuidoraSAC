@@ -11,6 +11,11 @@ import SysBadge from '@/Components/sys/SysBadge';
 import { SysEmptyState } from '@/Components/sys/SysFeedback';
 import Clientes from '@/Pages/ERP/Clientes';
 import Proveedores from '@/Pages/ERP/Proveedores';
+import Contactos from '@/Pages/ERP/Contactos';
+import Direcciones from '@/Pages/ERP/Direcciones';
+import CondicionesComerciales from '@/Pages/ERP/CondicionesComerciales';
+import LimitesCredito from '@/Pages/ERP/LimitesCredito';
+import HistorialComercial from '@/Pages/ERP/HistorialComercial';
 
 /**
  * Pantallas ya construidas, por `SISTEMA:modulo`. Lo que no esté aquí
@@ -19,6 +24,11 @@ import Proveedores from '@/Pages/ERP/Proveedores';
 const screens = {
   'ERP:clientes-y-proveedores.clientes': Clientes,
   'ERP:clientes-y-proveedores.proveedores': Proveedores,
+  'ERP:clientes-y-proveedores.contactos': Contactos,
+  'ERP:clientes-y-proveedores.direcciones': Direcciones,
+  'ERP:clientes-y-proveedores.condiciones-comerciales': CondicionesComerciales,
+  'ERP:clientes-y-proveedores.limites-de-credito': LimitesCredito,
+  'ERP:clientes-y-proveedores.historial-comercial': HistorialComercial,
 };
 
 export default function SystemPanel({
