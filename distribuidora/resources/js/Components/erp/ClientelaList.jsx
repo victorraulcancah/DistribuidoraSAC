@@ -309,9 +309,6 @@ export default function ClientelaList({ tipo }) {
         size="lg"
         footer={
           <>
-            <SysButton variant="ghost" type="button" onClick={closeModal} disabled={saving}>
-              Cancelar
-            </SysButton>
             <SysButton type="button" onClick={submit} disabled={saving}>
               {saving ? 'Guardando…' : 'Guardar'}
             </SysButton>

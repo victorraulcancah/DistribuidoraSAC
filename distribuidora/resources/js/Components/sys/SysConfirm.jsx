@@ -41,15 +41,10 @@ export default function SysConfirm({
       </div>
 
       <div className="mt-5 flex items-center justify-end gap-2">
-        <SysButton variant="ghost" type="button" onClick={onClose} disabled={loading}>
-          Cancelar
-        </SysButton>
         <SysButton
-          variant="solid"
           type="button"
           onClick={onConfirm}
           disabled={loading}
-          className={tone === 'danger' ? 'bg-red-600 text-white hover:bg-red-700' : undefined}
         >
           {loading ? 'Procesando…' : confirmLabel}
         </SysButton>

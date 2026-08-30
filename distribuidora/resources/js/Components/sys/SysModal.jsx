@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSystem } from '@/Components/systems/SystemThemeProvider';
+import { systemTheme } from '@/lib/systemTheme';
 
 /**
  * Modal con la identidad del sistema activo. Reutilizable para crear, editar
@@ -23,6 +25,15 @@ export default function SysModal({
   className,
 }) {
   const close = () => closeable && onClose?.();
+
+  // El Dialog se monta en un portal fuera del árbol del sistema, así que lo
+  // re-pinta con las variables del sistema activo para que los componentes
+  // hijos (SysButton, SysInput…) recojan el color correcto.
+  const system = useSystem();
+  const themeStyle = useMemo(
+    () => systemTheme(system?.color ?? '#3f3f46', system?.ink),
+    [system?.color, system?.ink]
+  );
 
   // Cerrar con Escape sin depender del prop Dialog de headlessui.
   useEffect(() => {
@@ -68,6 +79,7 @@ export default function SysModal({
           leaveTo="opacity-0 translate-y-4 sm:scale-95"
         >
           <DialogPanel
+            style={themeStyle}
             className={cn(
               'relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl',
               'shadow-zinc-950/20 ring-1 ring-zinc-200 transition-transform sm:mx-auto',

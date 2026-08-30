@@ -253,9 +253,6 @@ export default function CrudList({
         size="lg"
         footer={
           <div className="flex justify-end gap-2">
-            <SysButton variant="ghost" onClick={closeModal} disabled={saving}>
-              Cancelar
-            </SysButton>
             <SysButton onClick={submit} disabled={saving}>
               {saving ? 'Guardando...' : 'Guardar'}
             </SysButton>
@@ -291,13 +288,6 @@ export default function CrudList({
         onClose={closeModal}
         title={selected?.[titleField] ?? `Detalle del ${singular}`}
         size="md"
-        footer={
-          <div className="flex justify-end">
-            <SysButton variant="ghost" onClick={closeModal}>
-              Cerrar
-            </SysButton>
-          </div>
-        }
       >
         {selected && (
           <dl className="divide-y divide-zinc-100">
