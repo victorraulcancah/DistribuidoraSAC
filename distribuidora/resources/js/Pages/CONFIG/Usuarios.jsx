@@ -42,6 +42,15 @@ function EstadoBadge({ estado }) {
   );
 }
 
+function RoleBadge({ role }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md border border-[rgb(var(--sys-rgb)/0.3)] bg-[rgb(var(--sys-rgb)/0.1)] px-2 py-0.5 text-[11px] font-medium text-[rgb(var(--sys-ink-rgb))]">
+      <ShieldCheck size={11} />
+      {role?.display_name ?? role?.name}
+    </span>
+  );
+}
+
 function formatFecha(value) {
   if (!value) return '—';
   const date = new Date(value);
@@ -57,6 +66,8 @@ export default function Usuarios() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [roles, setRoles] = useState([]);
 
   // Modal: null | 'crear' | 'editar' | 'detalle'
   const [modal, setModal] = useState(null);
@@ -74,8 +85,12 @@ export default function Usuarios() {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.get('users');
+      const [{ data }, rolesRes] = await Promise.all([
+        api.get('users'),
+        api.get('roles', { per_page: 500 }).catch(() => ({ data: [] })),
+      ]);
       setRows(data ?? []);
+      setRoles(rolesRes?.data ?? []);
     } catch (e) {
       setError(unwrapError(e).message);
     } finally {
@@ -88,14 +103,19 @@ export default function Usuarios() {
   }, [load]);
 
   const openCreate = () => {
-    setForm({});
+    setForm({ role_ids: [] });
     setFormErrors({});
     setFormError(null);
     setModal('crear');
   };
 
   const openEdit = (row) => {
-    setForm({ name: row.name, email: row.email, password: '' });
+    setForm({
+      name: row.name,
+      email: row.email,
+      password: '',
+      role_ids: (row.roles ?? []).map((r) => r.id),
+    });
     setFormErrors({});
     setFormError(null);
     setSelected(row);
@@ -114,12 +134,24 @@ export default function Usuarios() {
 
   const setField = (key) => (e) => setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
+  const toggleRole = (roleId) =>
+    setForm((prev) => ({
+      ...prev,
+      role_ids: prev.role_ids?.includes(roleId)
+        ? prev.role_ids.filter((id) => id !== roleId)
+        : [...(prev.role_ids ?? []), roleId],
+    }));
+
   const submit = async () => {
     setSaving(true);
     setFormErrors({});
     setFormError(null);
     try {
-      const body = { name: form.name?.trim(), email: form.email?.trim() };
+      const body = {
+        name: form.name?.trim(),
+        email: form.email?.trim(),
+        role_ids: form.role_ids ?? [],
+      };
       // En edición la contraseña es opcional: vacía significa "no cambiar".
       if (modal === 'crear' || form.password) body.password = form.password;
 
@@ -174,10 +206,24 @@ export default function Usuarios() {
       label: 'Correo electrónico',
       render: (row) => (
         <span className="inline-flex items-center gap-1.5">
-          <Mail size={13} className="text-zinc-400" />
+          <Mail size={13} className="text-[rgb(var(--sys-rgb))]" />
           {row.email}
         </span>
       ),
+    },
+    {
+      key: 'roles',
+      label: 'Roles',
+      render: (row) =>
+        row.roles?.length ? (
+          <span className="flex flex-wrap items-center gap-1">
+            {row.roles.map((r) => (
+              <RoleBadge key={r.id} role={r} />
+            ))}
+          </span>
+        ) : (
+          <span className="text-zinc-300">—</span>
+        ),
     },
     {
       key: 'email_verified_at',
@@ -190,7 +236,7 @@ export default function Usuarios() {
       align: 'right',
       render: (row) => (
         <span className="inline-flex items-center gap-1.5 tabular-nums">
-          <CalendarClock size={13} className="text-zinc-400" />
+          <CalendarClock size={13} className="text-[rgb(var(--sys-rgb))]" />
           {formatFecha(row.created_at)}
         </span>
       ),
@@ -298,6 +344,43 @@ export default function Usuarios() {
               error={formErrors.password}
             />
           </SysField>
+          <SysField
+            label="Roles"
+            optional
+            error={formErrors.role_ids}
+            hint={roles.length === 0 ? 'Aún no hay roles definidos. Créalos en Accesos → Roles.' : undefined}
+          >
+            {roles.length ? (
+              <div className="max-h-40 space-y-1 overflow-y-auto rounded-lg border border-zinc-200 p-2">
+                {roles.map((role) => {
+                  const checked = (form.role_ids ?? []).includes(role.id);
+                  return (
+                    <label
+                      key={role.id}
+                      className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleRole(role.id)}
+                        className="h-3.5 w-3.5 rounded border-zinc-300 text-[rgb(var(--sys-rgb))] focus:ring-[rgb(var(--sys-rgb)/0.3)]"
+                      />
+                      <ShieldCheck
+                        size={14}
+                        className={checked ? 'text-[rgb(var(--sys-rgb))]' : 'text-zinc-300'}
+                      />
+                      <span className="flex-1 truncate font-medium">{role.display_name}</span>
+                      <code className="text-[11px] text-zinc-400">{role.name}</code>
+                    </label>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="rounded-lg border border-dashed border-zinc-200 px-3 py-2.5 text-[13px] text-zinc-500">
+                No hay roles disponibles.
+              </p>
+            )}
+          </SysField>
         </div>
       </SysModal>
 
@@ -319,6 +402,7 @@ export default function Usuarios() {
             { icon: UserRound, label: 'Nombre', value: selected?.name },
             { icon: Mail, label: 'Correo', value: selected?.email },
             { icon: BadgeCheck, label: 'Estado', value: null, estado: estadoDe(selected) },
+            { icon: ShieldCheck, label: 'Roles', badges: selected?.roles },
             { icon: CalendarClock, label: 'Creado', value: formatFecha(selected?.created_at) },
             { icon: Users, label: 'ID', value: selected?.id },
           ]}
@@ -374,11 +458,25 @@ function DetailGrid({ items }) {
       {items.map((item) => (
         <div key={item.label} className="flex items-center justify-between gap-4 py-2.5">
           <dt className="flex shrink-0 items-center gap-2 text-[13px] text-zinc-500">
-            {item.icon && <item.icon size={14} className="text-zinc-400" />}
+            {item.icon && <item.icon size={14} className="text-[rgb(var(--sys-rgb))]" />}
             {item.label}
           </dt>
           <dd className="min-w-0 truncate text-right text-[13px] font-medium text-zinc-800">
-            {item.estado ? <EstadoBadge estado={item.estado} /> : item.value ?? '—'}
+            {item.estado ? (
+              <EstadoBadge estado={item.estado} />
+            ) : item.badges ? (
+              item.badges.length ? (
+                <span className="flex items-center justify-end gap-1">
+                  {item.badges.map((r) => (
+                    <RoleBadge key={r.id} role={r} />
+                  ))}
+                </span>
+              ) : (
+                <span className="text-zinc-300">—</span>
+              )
+            ) : (
+              item.value ?? <span className="text-zinc-300">—</span>
+            )}
           </dd>
         </div>
       ))}

@@ -9,6 +9,7 @@ use App\Repositories\Implementations\DireccionRepository;
 use App\Repositories\Implementations\HistorialComercialRepository;
 use App\Repositories\Implementations\LimiteCreditoRepository;
 use App\Repositories\Implementations\ProveedorRepository;
+use App\Repositories\Implementations\RoleRepository;
 use App\Repositories\Implementations\UserRepository;
 use App\Repositories\Interfaces\ClienteRepositoryInterface;
 use App\Repositories\Interfaces\CondicionComercialRepositoryInterface;
@@ -17,6 +18,7 @@ use App\Repositories\Interfaces\DireccionRepositoryInterface;
 use App\Repositories\Interfaces\HistorialComercialRepositoryInterface;
 use App\Repositories\Interfaces\LimiteCreditoRepositoryInterface;
 use App\Repositories\Interfaces\ProveedorRepositoryInterface;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Services\Implementations\ClienteService;
 use App\Services\Implementations\CondicionComercialService;
@@ -25,6 +27,7 @@ use App\Services\Implementations\DireccionService;
 use App\Services\Implementations\HistorialComercialService;
 use App\Services\Implementations\LimiteCreditoService;
 use App\Services\Implementations\ProveedorService;
+use App\Services\Implementations\RoleService;
 use App\Services\Implementations\UserService;
 use App\Services\Interfaces\ClienteServiceInterface;
 use App\Services\Interfaces\CondicionComercialServiceInterface;
@@ -33,6 +36,7 @@ use App\Services\Interfaces\DireccionServiceInterface;
 use App\Services\Interfaces\HistorialComercialServiceInterface;
 use App\Services\Interfaces\LimiteCreditoServiceInterface;
 use App\Services\Interfaces\ProveedorServiceInterface;
+use App\Services\Interfaces\RoleServiceInterface;
 use App\Services\Interfaces\UserServiceInterface;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -67,6 +71,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(HistorialComercialRepositoryInterface::class, HistorialComercialRepository::class);
         $this->app->bind(HistorialComercialServiceInterface::class, HistorialComercialService::class);
+
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(RoleServiceInterface::class, RoleService::class);
     }
 
     /**

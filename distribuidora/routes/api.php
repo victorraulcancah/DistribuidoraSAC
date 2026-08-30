@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Direcciones\DireccionController;
 use App\Http\Controllers\Api\HistorialComercial\HistorialComercialController;
 use App\Http\Controllers\Api\LimitesCredito\LimiteCreditoController;
 use App\Http\Controllers\Api\Proveedores\ProveedorController;
+use App\Http\Controllers\Api\Roles\RoleController;
 use App\Http\Controllers\Api\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,5 +36,6 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('condiciones-comerciales', CondicionComercialController::class);
     Route::apiResource('limites-credito', LimiteCreditoController::class);
     Route::apiResource('historial-comercial', HistorialComercialController::class);
-    Route::get('users', [UserController::class, 'index']);
+    Route::apiResource('users', UserController::class);
+    Route::apiResource('roles', RoleController::class);
 });

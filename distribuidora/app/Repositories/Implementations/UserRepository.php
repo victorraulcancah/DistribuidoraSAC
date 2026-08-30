@@ -12,6 +12,11 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         parent::__construct($model);
     }
 
+    public function all(array $columns = ['*'])
+    {
+        return $this->model->with('roles:id,name,display_name')->get($columns);
+    }
+
     public function findByEmail(string $email)
     {
         return $this->model->where('email', $email)->first();
