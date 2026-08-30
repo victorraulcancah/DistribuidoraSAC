@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Api\Clientes;
 
+use App\Events\ClienteCreated;
+use App\Events\ClienteUpdated;
+use App\Events\ClienteDeleted;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Clientes\StoreClienteRequest;
 use App\Http\Requests\Clientes\UpdateClienteRequest;
@@ -44,6 +47,8 @@ class ClienteController extends Controller
     {
         $cliente = $this->clienteService->create($request->validated());
 
+        broadcast(new ClienteCreated($cliente));
+
         return response()->json([
             'success' => true,
             'message' => 'Cliente creado exitosamente',
@@ -66,6 +71,8 @@ class ClienteController extends Controller
     {
         $cliente = $this->clienteService->update($id, $request->validated());
 
+        broadcast(new ClienteUpdated($cliente));
+
         return response()->json([
             'success' => true,
             'message' => 'Cliente actualizado exitosamente',
@@ -75,7 +82,9 @@ class ClienteController extends Controller
 
     public function destroy($id)
     {
-        $this->clienteService->delete($id);
+        $cliente = $this->clienteService->delete($id);
+
+        broadcast(new ClienteDeleted($cliente->id ?? (int) $id));
 
         return response()->json([
             'success' => true,

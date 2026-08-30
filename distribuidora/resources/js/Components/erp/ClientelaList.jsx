@@ -92,6 +92,32 @@ export default function ClientelaList({ tipo }) {
     load();
   }, [load]);
 
+  // Tiempo real: escucha cambios de clientes/proveedores por WebSockets.
+  useEffect(() => {
+    if (!window.Echo) return;
+
+    const channel = window.Echo.channel('clientela.clientes');
+    channel
+      .listen('ClienteCreated', ({ cliente }) => {
+        if (cliente) {
+          setRows((prev) =>
+            prev.some((r) => r.id === cliente.id) ? prev : [cliente, ...prev]
+          );
+        }
+      })
+      .listen('ClienteUpdated', ({ cliente }) => {
+        if (!cliente) return;
+        setRows((prev) => prev.map((r) => (r.id === cliente.id ? cliente : r)));
+      })
+      .listen('ClienteDeleted', ({ cliente_id }) => {
+        setRows((prev) => prev.filter((r) => r.id !== Number(cliente_id)));
+      });
+
+    return () => {
+      window.Echo.leaveChannel('clientela.clientes');
+    };
+  }, []);
+
   // Vendedores (solo clientes): para el select del formulario.
   useEffect(() => {
     if (!esCliente) return;
