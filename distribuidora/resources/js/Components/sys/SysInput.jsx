@@ -53,3 +53,53 @@ export function SysLabel({ className, children, ...props }) {
     </label>
   );
 }
+
+/** Área de texto, con el mismo foco del sistema que SysInput. */
+export const SysTextarea = forwardRef(({ className, error, rows = 3, ...props }, ref) => (
+  <textarea
+    ref={ref}
+    rows={rows}
+    className={cn(
+      'w-full rounded-lg border bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400',
+      'focus:ring-2 disabled:bg-zinc-50 disabled:text-zinc-400',
+      error
+        ? 'border-red-300 focus:border-red-400 focus:ring-red-500/15'
+        : 'border-zinc-200 focus:border-[rgb(var(--sys-rgb)/0.6)] focus:ring-[rgb(var(--sys-rgb)/0.15)]',
+      className
+    )}
+    aria-invalid={error ? 'true' : 'false'}
+    {...props}
+  />
+));
+
+SysTextarea.displayName = 'SysTextarea';
+
+/**
+ * Envoltorio de un campo de formulario: etiqueta, marca de obligatorio u
+ * opcional, el control y su mensaje de error.
+ */
+export function SysField({ label, required, optional, error, hint, className, children }) {
+  return (
+    <div className={cn('space-y-1.5', className)}>
+      {label && (
+        <div className="flex items-baseline justify-between gap-2">
+          <SysLabel>
+            {label}
+            {required && <span className="ml-0.5 text-red-500">*</span>}
+          </SysLabel>
+          {optional && !required && (
+            <span className="text-[11px] text-zinc-400">opcional</span>
+          )}
+        </div>
+      )}
+
+      {children}
+
+      {error ? (
+        <p className="text-xs text-red-600">{error}</p>
+      ) : (
+        hint && <p className="text-xs text-zinc-500">{hint}</p>
+      )}
+    </div>
+  );
+}

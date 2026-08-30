@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Clientes\ClienteController;
 use App\Http\Controllers\Api\Proveedores\ProveedorController;
+use App\Http\Controllers\Api\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -22,6 +23,9 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
 });
 
 Route::middleware('auth:api')->group(function () {
+    // Lo consumen los selectores de vendedor/responsable de los formularios.
+    Route::get('users', [UserController::class, 'index']);
+
     Route::apiResource('clientes', ClienteController::class);
     Route::apiResource('proveedores', ProveedorController::class);
 });

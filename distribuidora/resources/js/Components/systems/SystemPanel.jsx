@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, Pencil, Trash2, UserRound } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { getSystem } from '@/data/systems';
 import { findModule } from '@/data/modules';
 import SystemThemeProvider from './SystemThemeProvider';
@@ -8,41 +8,18 @@ import NotificationsMenu from './NotificationsMenu';
 import SystemSwitcher from './SystemSwitcher';
 import SysSidebar from '@/Components/sys/SysSidebar';
 import SysBadge from '@/Components/sys/SysBadge';
-import SysDataTable from '@/Components/sys/SysDataTable';
 import { SysEmptyState } from '@/Components/sys/SysFeedback';
-import { demoClientes } from '@/data/demoRows';
+import Clientes from '@/Pages/ERP/Clientes';
+import Proveedores from '@/Pages/ERP/Proveedores';
 
-// Columnas de muestra para el listado de clientes de ERP.
-const clientesColumns = [
-  { key: 'codigo', label: 'Código' },
-  { key: 'nombre', label: 'Cliente' },
-  { key: 'ruc', label: 'RUC' },
-  { key: 'distrito', label: 'Distrito' },
-  { key: 'vendedor', label: 'Vendedor' },
-  {
-    key: 'deuda',
-    label: 'Deuda',
-    align: 'right',
-    render: (row) => `S/ ${row.deuda.toFixed(2)}`,
-  },
-  {
-    key: 'estado',
-    label: 'Estado',
-    render: (row) => (
-      <span
-        className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
-          row.estado === 'Activo'
-            ? 'bg-emerald-50 text-emerald-700'
-            : row.estado === 'Moroso'
-              ? 'bg-amber-50 text-amber-700'
-              : 'bg-red-50 text-red-700'
-        }`}
-      >
-        {row.estado}
-      </span>
-    ),
-  },
-];
+/**
+ * Pantallas ya construidas, por `SISTEMA:modulo`. Lo que no esté aquí
+ * todavía muestra el estado "en construcción".
+ */
+const screens = {
+  'ERP:clientes-y-proveedores.clientes': Clientes,
+  'ERP:clientes-y-proveedores.proveedores': Proveedores,
+};
 
 export default function SystemPanel({
   systemId,
@@ -57,6 +34,7 @@ export default function SystemPanel({
   const [menuOpen, setMenuOpen] = useState(false);
   const current = findModule(systemId, activeModule);
   const ModuleIcon = current?.icon;
+  const Screen = screens[`${systemId}:${activeModule}`];
 
   return (
     <SystemThemeProvider
@@ -96,38 +74,14 @@ export default function SystemPanel({
         </header>
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">
-          {activeModule === 'clientes-y-proveedores.clientes' ? (
-            <SysDataTable
-              columns={clientesColumns}
-              rows={demoClientes}
-              searchPlaceholder="Buscar cliente, RUC, distrito..."
-              empty="Ningún cliente coincide con la búsqueda."
-              cardIcon={UserRound}
-              actions={() => (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Editar"
-                    className="rounded-md p-1 text-[rgb(var(--sys-rgb))] transition-colors hover:bg-[rgb(var(--sys-rgb)/0.12)]"
-                  >
-                    <Pencil size={15} />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Eliminar"
-                    className="rounded-md p-1 text-red-500 transition-colors hover:bg-red-50"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </>
-              )}
-            />
+          {Screen ? (
+            <Screen />
           ) : (
             <div className="rounded-xl border border-zinc-200 bg-white">
               <SysEmptyState
                 icon={ModuleIcon}
                 title={`${current?.label} en construcción`}
-                description={`Este módulo de ${system?.full} todavía no tiene contenido. Los componentes ya heredan el color del sistema, así que al construirlo saldrá con la identidad de ${system?.id}.`}
+                description={`Este módulo de ${system?.full} todavía no tiene contenido.`}
               />
             </div>
           )}
