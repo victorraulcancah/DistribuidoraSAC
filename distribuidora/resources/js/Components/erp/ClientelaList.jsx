@@ -196,15 +196,15 @@ export default function ClientelaList({ tipo }) {
       { key: 'codigo', label: 'Código' },
       {
         key: 'razon_social',
-        label: esCliente ? 'Cliente' : 'Proveedor',
+        label: 'Razón social',
         render: (row) => (
-          <div className="min-w-0">
-            <p className="truncate font-medium text-zinc-900">{row.razon_social}</p>
-            {row.nombre_comercial && (
-              <p className="truncate text-[11px] text-zinc-400">{row.nombre_comercial}</p>
-            )}
-          </div>
+          <span className="font-medium text-zinc-900">{row.razon_social}</span>
         ),
+      },
+      {
+        key: 'nombre_comercial',
+        label: 'Nombre comercial',
+        render: (row) => row.nombre_comercial || '—',
       },
       { key: 'numero_documento', label: 'Documento' },
       { key: 'telefono', label: 'Teléfono', render: (row) => row.telefono ?? '—' },

@@ -76,6 +76,7 @@ export default function SysDataTable({
   rowKey = 'id',
   searchPlaceholder = 'Buscar...',
   empty = 'No hay registros para mostrar.',
+  pageSize = 30,
   // `cardIcon` es solo de la vista móvil; `actions` pinta la columna de acciones
   // en la tabla y los botones de cada tarjeta en móvil
   cardIcon: CardIcon,
@@ -95,6 +96,8 @@ export default function SysDataTable({
   // anchos fijados por el usuario al arrastrar el borde de una cabecera
   const [widths, setWidths] = useState({});
   const [resizingKey, setResizingKey] = useState(null);
+  // Se muestran `shown` filas; al llegar al final del scroll se piden más.
+  const [shown, setShown] = useState(pageSize);
 
   const byKey = useMemo(() => Object.fromEntries(columns.map((c) => [c.key, c])), [columns]);
 
@@ -195,6 +198,21 @@ export default function SysDataTable({
 
     return result;
   }, [rows, search, columnSearch, filters, sort, visible]);
+
+  // Cualquier cambio en el filtrado devuelve el listado a la primera tanda.
+  useEffect(() => {
+    setShown(pageSize);
+  }, [pageSize, search, columnSearch, filters, sort, rows]);
+
+  const pageRows = useMemo(() => data.slice(0, shown), [data, shown]);
+
+  /** Carga la siguiente tanda cuando el scroll se acerca al final. */
+  const onScroll = (e) => {
+    const el = e.currentTarget;
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120) {
+      setShown((prev) => (prev < data.length ? prev + pageSize : prev));
+    }
+  };
 
   const activeColumnSearches = Object.values(columnSearch).filter((v) => v?.trim()).length;
 
@@ -306,10 +324,13 @@ export default function SysDataTable({
       )}
 
       {/* tabla */}
-      <div className="hidden overflow-x-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
+      <div
+        onScroll={onScroll}
+        className="hidden max-h-[65vh] overflow-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block"
+      >
         <table className="w-full border-collapse bg-white text-sm">
           <thead>
-            <tr className="bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
+            <tr className="sticky top-0 z-20 bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
               {visible.map((col) => {
                 const isSorted = sort.key === col.key;
                 const isDragged = dragging === col.key;
@@ -332,7 +353,7 @@ export default function SysDataTable({
                     }}
                     onDrop={() => handleDrop(col.key)}
                     className={cn(
-                      'group relative whitespace-nowrap px-3 py-2',
+                      'group relative whitespace-nowrap px-3 py-1.5',
                       // sin transición mientras se arrastra el borde: debe seguir al cursor
                       resizingKey === col.key
                         ? 'select-none'
@@ -439,7 +460,7 @@ export default function SysDataTable({
           </thead>
 
           <tbody>
-            {data.length === 0 ? (
+            {pageRows.length === 0 ? (
               <tr>
                 <td
                   colSpan={(visible.length || 1) + (actions ? 1 : 0)}
@@ -449,7 +470,7 @@ export default function SysDataTable({
                 </td>
               </tr>
             ) : (
-              data.map((row) => (
+              pageRows.map((row) => (
                 <tr
                   key={row[rowKey]}
                   className="border-b border-zinc-100 transition-colors last:border-b-0 hover:bg-[rgb(var(--sys-rgb)/0.05)]"
@@ -458,7 +479,7 @@ export default function SysDataTable({
                     <td
                       key={col.key}
                       className={cn(
-                        'px-3 py-2.5 text-zinc-700 transition-all duration-200',
+                        'px-3 py-1.5 text-zinc-700 transition-all duration-200',
                         col.align === 'right' && 'text-right tabular-nums'
                       )}
                     >
@@ -467,7 +488,7 @@ export default function SysDataTable({
                   ))}
 
                   {actions && (
-                    <td className="w-px whitespace-nowrap px-3 py-2.5">
+                    <td className="w-px whitespace-nowrap px-3 py-1.5">
                       <div className="flex items-center justify-end gap-1">{actions(row)}</div>
                     </td>
                   )}
@@ -479,13 +500,13 @@ export default function SysDataTable({
       </div>
 
       {/* móvil: cada fila se convierte en una tarjeta */}
-      <div className="space-y-2 sm:hidden">
-        {data.length === 0 ? (
+      <div onScroll={onScroll} className="max-h-[70vh] space-y-2 overflow-y-auto sm:hidden">
+        {pageRows.length === 0 ? (
           <p className="rounded-xl bg-white px-4 py-10 text-center text-sm text-zinc-500 ring-1 ring-zinc-200">
             {empty}
           </p>
         ) : (
-          data.map((row) => {
+          pageRows.map((row) => {
             const [head, ...rest] = visible;
             return (
               <div
@@ -532,7 +553,9 @@ export default function SysDataTable({
 
       <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500">
         <span>
-          {data.length} de {rows.length} registros
+          {data.length === pageRows.length
+            ? `${data.length} de ${rows.length} registros`
+            : `Mostrando ${pageRows.length} de ${data.length} · ${rows.length} en total`}
         </span>
         {hidden.length > 0 && <span>{hidden.length} columna(s) oculta(s)</span>}
       </div>
