@@ -309,26 +309,21 @@ export default function SysDataTable({
     return () => ro.disconnect();
   }, [pageRows, visible, widths]);
 
-  /** La cabecera sigue al cuerpo cuando se desplaza en horizontal. */
-  const syncScroll = (e) => {
-    if (headRef.current) headRef.current.scrollLeft = e.currentTarget.scrollLeft;
+  // Al tocar el fondo se avanza UNA página y la lista vuelve arriba. Con un
+  // observador de intersección el centinela seguía visible tras el cambio y
+  // encadenaba varias páginas de golpe.
+  const onBodyScroll = (e) => {
+    const el = e.currentTarget;
+    if (headRef.current) headRef.current.scrollLeft = el.scrollLeft;
+
+    const alFondo = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
+    if (alFondo && page < pageCount) setPage((p) => Math.min(p + 1, pageCount));
   };
 
-  // Al llegar al final de la tabla se pasa a la página siguiente sola.
-  const endRef = useRef(null);
+  // Cada cambio de página empieza por la primera fila.
   useEffect(() => {
-    const el = endRef.current;
-    if (!el || page >= pageCount) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setPage((p) => Math.min(p + 1, pageCount));
-      },
-      { root: bodyRef.current, rootMargin: '80px' }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [page, pageCount]);
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [page]);
 
   const activeColumnSearches = Object.values(columnSearch).filter((v) => v?.trim()).length;
 
@@ -591,7 +586,7 @@ export default function SysDataTable({
           </table>
         </div>
 
-        <div ref={bodyRef} onScroll={syncScroll} className="max-h-[55vh] overflow-auto">
+        <div ref={bodyRef} onScroll={onBodyScroll} className="max-h-[55vh] overflow-auto">
           <table ref={bodyTableRef} className="w-full border-collapse bg-white text-sm">
           <tbody>
             {pageRows.length === 0 ? (
@@ -632,8 +627,6 @@ export default function SysDataTable({
           </tbody>
           </table>
 
-          {/* al asomarse el final de las filas, pasa a la página siguiente */}
-          <div ref={endRef} aria-hidden="true" className="h-px" />
         </div>
       </div>
 
@@ -703,7 +696,7 @@ export default function SysDataTable({
             <select
               value={perPage}
               onChange={(e) => setPerPage(Number(e.target.value))}
-              className="rounded-md border border-zinc-200 bg-white px-1.5 py-1 text-[12px] text-zinc-700 outline-none focus:border-[rgb(var(--sys-rgb)/0.6)]"
+              className="rounded-md border border-zinc-200 bg-white py-1 pl-2 pr-6 text-[12px] text-zinc-700 outline-none focus:border-[rgb(var(--sys-rgb)/0.6)]"
             >
               {[30, 50, 100, 200].map((n) => (
                 <option key={n} value={n}>
