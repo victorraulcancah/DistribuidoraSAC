@@ -76,7 +76,8 @@ export default function SysDataTable({
   rowKey = 'id',
   searchPlaceholder = 'Buscar...',
   empty = 'No hay registros para mostrar.',
-  // solo para la vista móvil: icono junto al título y acciones de cada tarjeta
+  // `cardIcon` es solo de la vista móvil; `actions` pinta la columna de acciones
+  // en la tabla y los botones de cada tarjeta en móvil
   cardIcon: CardIcon,
   actions,
   className,
@@ -424,6 +425,16 @@ export default function SysDataTable({
                   </th>
                 );
               })}
+
+              {/* columna fija: no se mueve, no se oculta ni se ordena */}
+              {actions && (
+                <th
+                  scope="col"
+                  className="w-px whitespace-nowrap px-3 py-2 text-right text-[11px] font-semibold uppercase tracking-wider"
+                >
+                  Acciones
+                </th>
+              )}
             </tr>
           </thead>
 
@@ -431,7 +442,7 @@ export default function SysDataTable({
             {data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={visible.length || 1}
+                  colSpan={(visible.length || 1) + (actions ? 1 : 0)}
                   className="px-4 py-12 text-center text-sm text-zinc-500"
                 >
                   {empty}
@@ -454,6 +465,12 @@ export default function SysDataTable({
                       {col.render ? col.render(row) : row[col.key]}
                     </td>
                   ))}
+
+                  {actions && (
+                    <td className="w-px whitespace-nowrap px-3 py-2.5">
+                      <div className="flex items-center justify-end gap-1">{actions(row)}</div>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
