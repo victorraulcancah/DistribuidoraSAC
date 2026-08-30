@@ -561,7 +561,9 @@ function ActionIcon({ title, onClick, className, children }) {
       aria-label={title}
       onClick={onClick}
       className={cn(
-        'rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800',
+        // Por defecto toman el color del sistema; las acciones de riesgo
+        // (desactivar, eliminar) lo sobrescriben con ámbar y rojo.
+        'rounded-md p-1.5 text-[rgb(var(--sys-rgb))] transition-colors hover:bg-[rgb(var(--sys-rgb)/0.12)]',
         className
       )}
     >

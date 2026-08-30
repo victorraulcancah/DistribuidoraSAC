@@ -2,6 +2,11 @@
 
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Clientes\ClienteController;
+use App\Http\Controllers\Api\CondicionesComerciales\CondicionComercialController;
+use App\Http\Controllers\Api\Contactos\ContactoController;
+use App\Http\Controllers\Api\Direcciones\DireccionController;
+use App\Http\Controllers\Api\HistorialComercial\HistorialComercialController;
+use App\Http\Controllers\Api\LimitesCredito\LimiteCreditoController;
 use App\Http\Controllers\Api\Proveedores\ProveedorController;
 use App\Http\Controllers\Api\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -23,9 +28,12 @@ Route::middleware('auth:api')->prefix('user')->group(function () {
 });
 
 Route::middleware('auth:api')->group(function () {
-    // Lo consumen los selectores de vendedor/responsable de los formularios.
-    Route::get('users', [UserController::class, 'index']);
-
     Route::apiResource('clientes', ClienteController::class);
     Route::apiResource('proveedores', ProveedorController::class);
+    Route::apiResource('contactos', ContactoController::class);
+    Route::apiResource('direcciones', DireccionController::class);
+    Route::apiResource('condiciones-comerciales', CondicionComercialController::class);
+    Route::apiResource('limites-credito', LimiteCreditoController::class);
+    Route::apiResource('historial-comercial', HistorialComercialController::class);
+    Route::get('users', [UserController::class, 'index']);
 });
