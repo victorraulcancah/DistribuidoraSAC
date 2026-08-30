@@ -2,6 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowDown,
   ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   ChevronsUpDown,
   Eye,
   Filter,
@@ -161,8 +165,8 @@ export default function SysDataTable({
   // anchos fijados por el usuario al arrastrar el borde de una cabecera
   const [widths, setWidths] = useState({});
   const [resizingKey, setResizingKey] = useState(null);
-  // Se muestran `shown` filas; al llegar al final del scroll se piden más.
-  const [shown, setShown] = useState(pageSize);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(pageSize);
 
   const byKey = useMemo(() => Object.fromEntries(columns.map((c) => [c.key, c])), [columns]);
 
@@ -266,20 +270,30 @@ export default function SysDataTable({
     return result;
   }, [rows, search, columnSearch, filters, sort, visible, byKey]);
 
-  // Cualquier cambio en el filtrado devuelve el listado a la primera tanda.
+  // Cualquier cambio en el filtrado devuelve el listado a la primera página.
   useEffect(() => {
-    setShown(pageSize);
-  }, [pageSize, search, columnSearch, filters, sort, rows]);
+    setPage(1);
+  }, [perPage, search, columnSearch, filters, sort, rows]);
 
-  const pageRows = useMemo(() => data.slice(0, shown), [data, shown]);
+  const pageCount = Math.max(1, Math.ceil(data.length / perPage));
+  const from = (page - 1) * perPage;
+  const pageRows = useMemo(() => data.slice(from, from + perPage), [data, from, perPage]);
 
-  /** Carga la siguiente tanda cuando el scroll se acerca al final. */
-  const onScroll = (e) => {
-    const el = e.currentTarget;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120) {
-      setShown((prev) => (prev < data.length ? prev + pageSize : prev));
-    }
-  };
+  // Al llegar al final de la tabla se pasa a la página siguiente sola.
+  const endRef = useRef(null);
+  useEffect(() => {
+    const el = endRef.current;
+    if (!el || page >= pageCount) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setPage((p) => Math.min(p + 1, pageCount));
+      },
+      { rootMargin: '80px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [page, pageCount]);
 
   const activeColumnSearches = Object.values(columnSearch).filter((v) => v?.trim()).length;
 
@@ -391,10 +405,7 @@ export default function SysDataTable({
       )}
 
       {/* tabla */}
-      <div
-        onScroll={onScroll}
-        className="hidden max-h-[65vh] overflow-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block"
-      >
+      <div className="hidden overflow-x-auto rounded-lg shadow-sm ring-1 ring-zinc-200 sm:block">
         <table className="w-full border-collapse bg-white text-sm">
           <thead>
             <tr className="sticky top-0 z-20 bg-gradient-to-br from-[rgb(var(--sys-rgb))] to-[rgb(var(--sys-dark-rgb))] text-[var(--sys-on)]">
@@ -567,10 +578,7 @@ export default function SysDataTable({
       </div>
 
       {/* móvil: cada fila se convierte en una tarjeta */}
-      <div
-        onScroll={onScroll}
-        className="-m-1 max-h-[70vh] space-y-2 overflow-y-auto p-1 sm:hidden"
-      >
+      <div className="space-y-2 sm:hidden">
         {pageRows.length === 0 ? (
           <p className="rounded-xl bg-white px-4 py-10 text-center text-sm text-zinc-500 ring-1 ring-zinc-200">
             {empty}
@@ -621,15 +629,121 @@ export default function SysDataTable({
         )}
       </div>
 
-      <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-500">
-        <span>
-          {data.length === pageRows.length
-            ? `${data.length} de ${rows.length} registros`
-            : `Mostrando ${pageRows.length} de ${data.length} · ${rows.length} en total`}
-        </span>
-        {hidden.length > 0 && <span>{hidden.length} columna(s) oculta(s)</span>}
+      {/* marca el final de la tabla: al verse, avanza de página */}
+      <div ref={endRef} aria-hidden="true" className="h-px" />
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-[12px] text-zinc-500">
+        <div className="flex items-center gap-3">
+          <span>
+            {data.length === 0
+              ? 'Sin registros'
+              : `${from + 1}–${Math.min(from + perPage, data.length)} de ${data.length}`}
+            {data.length !== rows.length && ` (${rows.length} en total)`}
+          </span>
+
+          <label className="flex items-center gap-1.5">
+            <span className="hidden sm:inline">Por página</span>
+            <select
+              value={perPage}
+              onChange={(e) => setPerPage(Number(e.target.value))}
+              className="rounded-md border border-zinc-200 bg-white px-1.5 py-1 text-[12px] text-zinc-700 outline-none focus:border-[rgb(var(--sys-rgb)/0.6)]"
+            >
+              {[30, 50, 100, 200].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        {pageCount > 1 && (
+          <div className="flex items-center gap-1">
+            <PageButton onClick={() => setPage(1)} disabled={page === 1} label="Primera">
+              <ChevronsLeft size={15} />
+            </PageButton>
+            <PageButton
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              label="Anterior"
+            >
+              <ChevronLeft size={15} />
+            </PageButton>
+
+            {pageNumbers(page, pageCount).map((n, i) =>
+              n === '...' ? (
+                <span key={`gap${i}`} className="px-1 text-zinc-400">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setPage(n)}
+                  aria-current={n === page ? 'page' : undefined}
+                  className={cn(
+                    'min-w-[28px] rounded-md px-2 py-1 font-medium transition-colors',
+                    n === page
+                      ? 'bg-[rgb(var(--sys-rgb))] text-[var(--sys-on)]'
+                      : 'text-zinc-600 hover:bg-[rgb(var(--sys-rgb)/0.12)]'
+                  )}
+                >
+                  {n}
+                </button>
+              )
+            )}
+
+            <PageButton
+              onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+              disabled={page === pageCount}
+              label="Siguiente"
+            >
+              <ChevronRight size={15} />
+            </PageButton>
+            <PageButton
+              onClick={() => setPage(pageCount)}
+              disabled={page === pageCount}
+              label="Última"
+            >
+              <ChevronsRight size={15} />
+            </PageButton>
+          </div>
+        )}
       </div>
     </div>
+  );
+}
+
+/* ------------------------------- paginación ------------------------------- */
+
+/** Números de página a mostrar, con elipsis cuando hay muchas. */
+function pageNumbers(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const pages = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+
+  if (start > 2) pages.push('...');
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (end < total - 1) pages.push('...');
+  pages.push(total);
+
+  return pages;
+}
+
+function PageButton({ onClick, disabled, label, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+      className="rounded-md p-1 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent"
+    >
+      {children}
+    </button>
   );
 }
 
